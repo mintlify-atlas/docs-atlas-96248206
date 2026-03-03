@@ -1,0 +1,74 @@
+---
+title: Broadcast Command
+description: Send messages to all players across all servers
+---
+
+The `/broadcast` command allows administrators to send formatted messages to all players on the server, or across multiple servers when Redis is configured.
+
+## Usage
+
+```
+/broadcast <message>
+```
+
+### Arguments
+
+- `<message>` - The message to broadcast (supports MiniMessage formatting)
+
+## Permission
+
+```
+fairychat.command.broadcast
+```
+
+Only users with this permission can execute the broadcast command.
+
+## Features
+
+### Multi-Server Support
+
+When Redis is configured, broadcasts are automatically sent to all connected servers. If Redis is not available, the message will only be sent to players on the current server.
+
+### Message Formatting
+
+Broadcast messages support MiniMessage formatting, allowing you to use:
+
+- Colors and gradients
+- Text decorations (bold, italic, etc.)
+- Click and hover events
+- Custom formatting tags
+
+The broadcast format can be customized in the plugin configuration under `broadcast.format`.
+
+## Examples
+
+### Basic Broadcast
+
+```
+/broadcast Server restart in 5 minutes!
+```
+
+### Formatted Broadcast
+
+```
+/broadcast <gradient:red:gold>Important Announcement</gradient>
+```
+
+```
+/broadcast <bold><red>Warning:</red></bold> Maintenance starting soon
+```
+
+## Related Permissions
+
+- `fairychat.feature.minimessage` - Allows the use of MiniMessage formatting and color codes in the broadcast message
+
+## Configuration
+
+The broadcast message format can be customized in your `config.yml`:
+
+```yaml
+broadcast:
+  format: "<gray>[</gray><gradient:#BE95C4:#9F86C0>Broadcast</gradient><gray>]</gray> <message>"
+```
+
+The `<message>` placeholder will be replaced with your broadcast content.

@@ -1,0 +1,107 @@
+---
+title: Installation
+description: Install FairyChat on your Paper server
+---
+
+# Installing FairyChat
+
+Get FairyChat up and running on your server in just a few simple steps.
+
+## Requirements
+
+Before installing FairyChat, ensure your server meets these requirements:
+
+<Note>
+  FairyChat requires **Paper 1.19.4 or higher** (or any fork of Paper). It is not compatible with Spigot, CraftBukkit, or vanilla Minecraft servers.
+</Note>
+
+**Supported Versions:**
+- Paper 1.19.4+
+- Paper 1.20.x
+- Paper 1.21.x (up to 1.21.11)
+- Purpur
+- Folia
+
+## Installation Steps
+
+<Steps>
+  <Step title="Download FairyChat">
+    Download the latest version of FairyChat from the [GitHub Releases page](https://github.com/rexlManu/FairyChat/releases).
+    
+    Make sure to download the `.jar` file for the latest release.
+  </Step>
+  
+  <Step title="Place in Plugins Folder">
+    Place the downloaded `FairyChat-x.x.x.jar` file into your server's `plugins` folder.
+    
+    ```bash
+    server/
+    └── plugins/
+        └── FairyChat-x.x.x.jar
+    ```
+  </Step>
+  
+  <Step title="Restart Your Server">
+    Restart your server to load FairyChat. The plugin will generate a default configuration file on first startup.
+    
+    The configuration file will be created at `plugins/FairyChat/config.yml`.
+  </Step>
+  
+  <Step title="Configure FairyChat">
+    Customize FairyChat to your liking by editing the configuration file.
+    
+    See the configuration section for detailed information on available options.
+  </Step>
+  
+  <Step title="Restart Again">
+    After making configuration changes, restart your server again to apply them.
+    
+    Alternatively, you can use `/fairychat reload` to reload the configuration without restarting.
+  </Step>
+</Steps>
+
+## Recommended Plugin
+
+<Note>
+  It's **highly recommended** to install [FreedomChat](https://modrinth.com/plugin/freedomchat) alongside FairyChat.
+  
+  FreedomChat fixes the issue with random kicks because of invalid chat signatures in newer Minecraft versions.
+</Note>
+
+## Optional Dependencies
+
+FairyChat supports integration with several optional plugins to enhance functionality:
+
+### Placeholder Plugins
+- **[MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders)** - Modern placeholder support with MiniMessage
+- **[PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)** - Legacy placeholder support (use format: `<papi:'placeholder-name'>`)
+
+### Permission Plugins
+- **[LuckPerms](https://luckperms.net/)** - Built-in placeholders for prefixes, suffixes, and meta data
+- **UltraPermissions** - Alternative permission plugin support
+
+### Multi-Server Support
+For cross-server features, you'll need to configure Redis in the configuration file. This enables:
+- Cross-server private messages
+- Multi-server broadcasts
+- Synchronized chat clearing
+
+## Verification
+
+To verify that FairyChat is installed correctly:
+
+1. Check your server console for a successful FairyChat startup message
+2. Run `/fairychat` in-game to see plugin information
+3. Try sending a chat message to confirm chat formatting is working
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Learn the basics and test your setup
+  </Card>
+  
+  <Card title="Configuration" icon="gear" href="/configuration/overview">
+    Customize FairyChat to your needs
+  </Card>
+</CardGroup>

@@ -1,0 +1,149 @@
+---
+title: MiniPlaceholders
+description: Use MiniPlaceholders with FairyChat for modern placeholder support
+---
+
+FairyChat supports MiniPlaceholders, a modern placeholder system designed to work seamlessly with Adventure and MiniMessage.
+
+## Installation
+
+1. Download and install [MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders)
+2. Download the expansions you need for your plugins
+3. FairyChat will automatically detect and enable MiniPlaceholders support
+
+<Note>
+MiniPlaceholders is automatically detected and enabled when installed. No configuration is required.
+</Note>
+
+## Usage
+
+Unlike PlaceholderAPI, MiniPlaceholders uses a simpler format. Just use the placeholder directly in your chat format:
+
+```yaml
+format: "<player_name>: <message>"
+```
+
+<Tip>
+MiniPlaceholders integrates seamlessly with MiniMessage formatting, allowing you to combine placeholders with gradients, colors, and other formatting tags.
+</Tip>
+
+## Built-in Placeholders
+
+FairyChat provides these built-in placeholders that work without any additional plugins:
+
+| Placeholder | Description |
+|-------------|-------------|
+| `<sender_name>` | The name of the sender |
+| `<sender_displayname>` | The display name of the sender |
+| `<server_name>` | The name of the server configured in config |
+
+## Examples
+
+### Basic Format
+
+Use built-in placeholders in your chat format:
+
+```yaml
+format: "<sender_displayname>: <message>"
+```
+
+### With Server Name
+
+Show which server the message came from:
+
+```yaml
+format: "[<server_name>] <sender_displayname>: <message>"
+```
+
+### Combined with MiniMessage
+
+Mix placeholders with MiniMessage formatting:
+
+```yaml
+format: "<gradient:red:blue><sender_displayname></gradient> <gray>»</gray> <message>"
+```
+
+### Using MiniPlaceholders Expansions
+
+If you have MiniPlaceholders expansions installed, you can use their placeholders directly:
+
+```yaml
+# Example with a hypothetical expansion
+format: "<player_ping>ms | <sender_displayname>: <message>"
+```
+
+## Available Expansions
+
+MiniPlaceholders supports various expansions for different plugins. Check the [MiniPlaceholders documentation](https://github.com/MiniPlaceholders/MiniPlaceholders) for a list of available expansions.
+
+Some popular expansions include:
+- Player information
+- Server statistics
+- Economy data
+- Combat stats
+- And many more
+
+## How It Works
+
+FairyChat's MiniPlaceholders integration:
+
+- Automatically detects MiniPlaceholders on server startup
+- Enables placeholder resolution for all MiniPlaceholders expansions
+- Processes placeholders natively through the Adventure/MiniMessage system
+- Resolves placeholders in real-time for each message
+
+## Advantages
+
+### Native Integration
+MiniPlaceholders is built on Adventure, the same component system that FairyChat uses, providing seamless integration.
+
+### Better Performance
+No legacy text conversion is needed, resulting in better performance compared to PlaceholderAPI.
+
+### Modern Format
+Works naturally with MiniMessage syntax, making configuration more intuitive.
+
+### Type Safety
+Supports more than just text replacements, including proper color and component handling.
+
+## Comparison with PlaceholderAPI
+
+| Feature | MiniPlaceholders | PlaceholderAPI |
+|---------|-----------------|----------------|
+| Format | `<placeholder>` | `<papi:'placeholder'>` |
+| Integration | Native Adventure | Legacy with conversion |
+| Performance | Better | Good |
+| Ecosystem | Growing | Extensive |
+| Setup | Simple | Requires ecloud |
+
+<Tip>
+For new servers, we recommend using MiniPlaceholders for its modern architecture and seamless integration with FairyChat.
+</Tip>
+
+## Troubleshooting
+
+### Placeholder Not Working
+
+If a placeholder isn't displaying correctly:
+
+1. Verify MiniPlaceholders is installed and running
+2. Check that the required expansion is installed
+3. Ensure the placeholder name is correct (case-sensitive)
+4. Check the MiniPlaceholders configuration
+
+### Integration Not Enabled
+
+Look for this message in your server logs during startup:
+
+```
+Enabled integration MiniPlaceholders.
+```
+
+If you don't see this message, verify that MiniPlaceholders is properly installed.
+
+## Related
+
+- [LuckPerms Integration](/integrations/luckperms)
+- [PlaceholderAPI Integration](/integrations/placeholderapi)
+- [Chat Formatting](/features/chat-formatting)
+- [Placeholders](/configuration/placeholders)

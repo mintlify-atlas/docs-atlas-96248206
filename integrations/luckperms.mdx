@@ -1,0 +1,89 @@
+---
+title: LuckPerms
+description: Integrate FairyChat with LuckPerms for advanced permission-based placeholders
+---
+
+FairyChat provides built-in integration with LuckPerms, allowing you to use permission-based placeholders without requiring additional plugins.
+
+## Installation
+
+1. Install [LuckPerms](https://luckperms.net/) on your server
+2. FairyChat will automatically detect and enable the integration
+
+<Note>
+No additional configuration is required. The integration is enabled automatically when LuckPerms is detected.
+</Note>
+
+## Available Placeholders
+
+The following placeholders are available when LuckPerms is installed:
+
+| Placeholder | Description |
+|-------------|-------------|
+| `<fc_luckperms_prefix>` | The primary prefix of the sender |
+| `<fc_luckperms_suffix>` | The primary suffix of the sender |
+| `<fc_luckperms_prefixes>` | All prefixes of the sender |
+| `<fc_luckperms_suffixes>` | All suffixes of the sender |
+| `<fc_luckperms_username_color>` | The meta key 'username-color' of the sender |
+| `<fc_luckperms_message_color>` | The meta key 'message-color' of the sender |
+| `<fc_luckperms_prefix_by_group:group name>` | Shows the prefix of the specified group if the user has it |
+
+## Usage Examples
+
+### Basic Format
+
+Use LuckPerms placeholders in your chat format configuration:
+
+```yaml
+format: "<fc_luckperms_prefix><sender_displayname><fc_luckperms_suffix>: <message>"
+```
+
+### Group-Specific Prefix
+
+Display a prefix only for members of a specific group:
+
+```yaml
+format: "<fc_luckperms_prefix_by_group:vip><sender_displayname>: <message>"
+```
+
+### Colored Username and Message
+
+Use LuckPerms meta keys to colorize usernames and messages:
+
+```yaml
+format: "<fc_luckperms_username_color><sender_displayname></fc_luckperms_username_color>: <fc_luckperms_message_color><message>"
+```
+
+### Setting Meta Keys in LuckPerms
+
+To use the color meta keys, set them in LuckPerms:
+
+```bash
+lp user <username> meta set username-color "<red>"
+lp user <username> meta set message-color "<gray>"
+```
+
+Or for groups:
+
+```bash
+lp group <groupname> meta set username-color "<gold>"
+lp group <groupname> meta set message-color "<white>"
+```
+
+## How It Works
+
+FairyChat's LuckPerms integration is initialized automatically when the plugin is detected:
+
+- The integration checks if LuckPerms is available on server startup
+- Once enabled, all LuckPerms placeholders become available for use
+- Placeholders are resolved in real-time based on the user's current permissions and meta data
+
+<Tip>
+You can combine LuckPerms placeholders with MiniMessage formatting for even more customization options.
+</Tip>
+
+## Related
+
+- [PlaceholderAPI Integration](/integrations/placeholderapi)
+- [MiniPlaceholders Integration](/integrations/miniplaceholders)
+- [Chat Formatting](/features/chat-formatting)

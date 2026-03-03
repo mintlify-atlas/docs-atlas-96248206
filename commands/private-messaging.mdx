@@ -1,0 +1,101 @@
+---
+title: Private Messaging
+description: Send private messages to other players
+---
+
+FairyChat provides a comprehensive private messaging system that allows players to communicate privately with each other, even across multiple servers.
+
+## Commands
+
+### Send a Private Message
+
+```
+/pm <username> <message>
+```
+
+Send a private message to another player.
+
+#### Arguments
+
+- `<username>` - The player to send the message to (supports tab completion)
+- `<message>` - The message content
+
+#### Aliases
+
+The `/pm` command supports configurable aliases. Default aliases may include:
+- `/msg`
+- `/message`
+- `/tell`
+- `/whisper`
+
+### Reply to a Private Message
+
+```
+/r <message>
+```
+
+Quickly reply to the last player who sent you a private message.
+
+#### Arguments
+
+- `<message>` - The message content
+
+#### Aliases
+
+The `/r` command supports configurable aliases. Default aliases may include:
+- `/reply`
+
+## Features
+
+### Multi-Server Support
+
+Private messages work seamlessly across multiple servers when Redis is configured. You can message any player on your network, regardless of which server they're connected to.
+
+### Tab Completion
+
+The username argument supports tab completion across all servers, making it easy to find and message players.
+
+### Ignore System Integration
+
+Players cannot send messages to users who have ignored them (unless they have the bypass permission).
+
+## Permissions
+
+Private messaging commands have no permission requirements by default - all players can use them.
+
+### Related Permissions
+
+- `fairychat.bypass.ignore` - Allows sending messages to players who have ignored you
+
+## Error Messages
+
+The system handles several error cases:
+
+- **Self-messaging**: You cannot send messages to yourself
+- **Ignored player**: You cannot message a player who has ignored you (unless you have bypass permission)
+- **No reply target**: Using `/r` when you haven't received any messages
+
+## Configuration
+
+You can customize private messaging settings in your `config.yml`:
+
+```yaml
+private-messaging:
+  aliases:
+    pm:
+      - msg
+      - message
+      - tell
+      - whisper
+    reply:
+      - r
+```
+
+Message formats can also be customized:
+
+```yaml
+messages:
+  you-cant-message-yourself: "<red>You can't message yourself!"
+  you-cant-message-this-player: "<red>You can't message this player."
+  you-didnt-message-anyone: "<red>You haven't messaged anyone yet."
+```

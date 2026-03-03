@@ -1,0 +1,214 @@
+---
+title: Mentions
+description: Mention players in chat with @ symbol and sound notifications
+icon: 'at'
+---
+
+FairyChat allows players to mention each other in chat using the `@` symbol, with customizable formatting and sound notifications.
+
+## How It Works
+
+When a player types `@username` in chat, the mentioned player will:
+1. See their name highlighted with custom formatting
+2. Hear a sound notification (if configured)
+3. Be able to easily identify they were mentioned
+
+<Frame>
+  <div style={{padding: '20px', background: '#1a1a1a', borderRadius: '8px', fontFamily: 'monospace'}}>
+    <span style={{color: '#5E548E'}}>Player1</span> <span style={{color: '#4a4a4a'}}>»</span> <span style={{color: '#a0a0a0'}}>Hey </span><span style={{color: '#5E548E'}}>@</span><span style={{color: '#BE95C4'}}>Player2</span><span style={{color: '#a0a0a0'}}>, check this out!</span>
+  </div>
+</Frame>
+
+## Configuration
+
+The mention system is fully configurable in your `config.yml`:
+
+```yaml
+mention:
+  # Format for how the mention appears in chat
+  format: "<#5E548E>@</#5E548E><#BE95C4><highlight_name></#BE95C4>"
+  
+  # Format for triggering the mention (Default: @username)
+  mentionNameFormat: "<sender_name>"
+  
+  # How the highlighted name should be formatted
+  highlightFormat: "<sender_name>"
+  
+  # Sound to play when mentioned
+  soundName: "block.note_block.pling"
+  
+  # Sound volume (0.0 to 1.0)
+  soundVolume: 1.0
+  
+  # Sound pitch (0.5 to 2.0)
+  soundPitch: 1.30
+```
+
+## Configuration Options
+
+<ParamField path="format" type="string" required>
+  The format for how the mention appears in chat. Use `<highlight_name>` as the placeholder for the mentioned player's name.
+  
+  **Default:** `"<#5E548E>@</#5E548E><#BE95C4><highlight_name></#BE95C4>"`
+</ParamField>
+
+<ParamField path="mentionNameFormat" type="string" required>
+  Determines how players should type to mention someone. 
+  
+  **Default:** `"<sender_name>"` (players type `@username`)
+  
+  **Alternative:** `"<sender_displayname>"` (players type `@DisplayName`)
+</ParamField>
+
+<ParamField path="highlightFormat" type="string" required>
+  Controls how the mentioned player's name is displayed in the highlight.
+  
+  **Default:** `"<sender_name>"` (shows username)
+  
+  **Alternative:** `"<sender_displayname>"` (shows display name)
+</ParamField>
+
+<ParamField path="soundName" type="string" required>
+  The Minecraft sound to play when a player is mentioned. Must be a valid Minecraft sound identifier.
+  
+  **Default:** `"block.note_block.pling"`
+</ParamField>
+
+<ParamField path="soundVolume" type="float" required>
+  The volume of the notification sound. Range: 0.0 to 1.0
+  
+  **Default:** `1.0`
+</ParamField>
+
+<ParamField path="soundPitch" type="float" required>
+  The pitch of the notification sound. Range: 0.5 to 2.0
+  
+  **Default:** `1.30`
+</ParamField>
+
+## Available Placeholders
+
+<ResponseField name="highlight_name" type="string">
+  The name of the mentioned player (formatted according to `highlightFormat`)
+</ResponseField>
+
+<ResponseField name="sender_name" type="string">
+  The username of the mentioned player
+</ResponseField>
+
+<ResponseField name="sender_displayname" type="string">
+  The display name of the mentioned player
+</ResponseField>
+
+## Customization Examples
+
+<CodeGroup>
+```yaml Gradient Mention
+mention:
+  format: "<gradient:gold:yellow>@<highlight_name></gradient>"
+  mentionNameFormat: "<sender_name>"
+  highlightFormat: "<sender_name>"
+  soundName: "entity.experience_orb.pickup"
+  soundVolume: 0.8
+  soundPitch: 1.5
+```
+
+```yaml Bold & Colored
+mention:
+  format: "<bold><gold>@<highlight_name></gold></bold>"
+  mentionNameFormat: "<sender_name>"
+  highlightFormat: "<sender_displayname>"
+  soundName: "block.note_block.bell"
+  soundVolume: 1.0
+  soundPitch: 2.0
+```
+
+```yaml Rainbow Effect
+mention:
+  format: "<rainbow>@<highlight_name></rainbow>"
+  mentionNameFormat: "<sender_name>"
+  highlightFormat: "<sender_name>"
+  soundName: "entity.player.levelup"
+  soundVolume: 0.5
+  soundPitch: 1.0
+```
+
+```yaml Subtle Mention
+mention:
+  format: "<gray>@<white><highlight_name></white></gray>"
+  mentionNameFormat: "<sender_name>"
+  highlightFormat: "<sender_name>"
+  soundName: "ui.button.click"
+  soundVolume: 0.3
+  soundPitch: 1.0
+```
+</CodeGroup>
+
+## Sound Options
+
+Here are some popular sound options you can use:
+
+<CardGroup cols={2}>
+  <Card title="Note Blocks" icon="music">
+    - `block.note_block.pling`
+    - `block.note_block.bell`
+    - `block.note_block.chime`
+    - `block.note_block.harp`
+  </Card>
+  <Card title="Entity Sounds" icon="bell">
+    - `entity.experience_orb.pickup`
+    - `entity.player.levelup`
+    - `entity.arrow.hit_player`
+  </Card>
+  <Card title="UI Sounds" icon="hand-pointer">
+    - `ui.button.click`
+    - `ui.toast.in`
+    - `ui.toast.challenge_complete`
+  </Card>
+  <Card title="Block Sounds" icon="cube">
+    - `block.amethyst_block.hit`
+    - `block.bell.use`
+    - `block.lever.click`
+  </Card>
+</CardGroup>
+
+<Tip>
+  Visit the [Minecraft Wiki Sound List](https://minecraft.wiki/w/Sounds.json) for a complete list of available sounds.
+</Tip>
+
+## Advanced Features
+
+### Multiple Mentions
+
+Players can mention multiple people in a single message:
+
+```
+Hey @Player1 and @Player2, let's team up!
+```
+
+Both Player1 and Player2 will receive the notification sound and see their names highlighted.
+
+### Case Insensitive
+
+Mentions are case-insensitive, so `@player1`, `@Player1`, and `@PLAYER1` all work the same.
+
+### Partial Name Matching
+
+FairyChat uses smart matching to find players even with partial names (exact implementation may vary).
+
+## Best Practices
+
+<Steps>
+  <Step title="Choose a distinct sound">
+    Pick a sound that's clearly audible but not annoying. Note block sounds work well.
+  </Step>
+  <Step title="Use contrasting colors">
+    Make sure the mention format stands out from regular chat messages.
+  </Step>
+  <Step title="Test volume levels">
+    Adjust `soundVolume` and `soundPitch` to find a comfortable balance.
+  </Step>
+  <Step title="Consider display names">
+    If your server uses nicknames, consider using `<sender_displayname>` instead of `<sender_name>`.
+  </Step>
+</Steps>

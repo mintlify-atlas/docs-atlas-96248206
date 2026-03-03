@@ -1,0 +1,136 @@
+---
+title: PlaceholderAPI
+description: Use PlaceholderAPI placeholders in FairyChat
+---
+
+FairyChat supports PlaceholderAPI, allowing you to use thousands of placeholders from various plugins in your chat formats.
+
+## Installation
+
+1. Download and install [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
+2. Download the expansions you need using `/papi ecloud download <expansion>`
+3. FairyChat will automatically detect and enable PlaceholderAPI support
+
+<Note>
+FairyChat automatically detects PlaceholderAPI when it's installed. No additional configuration is needed.
+</Note>
+
+## Usage Format
+
+To use PlaceholderAPI placeholders in FairyChat, wrap them with the special `<papi:>` format:
+
+```
+<papi:'placeholder-name'>
+```
+
+<Warning>
+Note the single quotes around the placeholder name. This format is required for PlaceholderAPI placeholders to work correctly.
+</Warning>
+
+## Examples
+
+### Player Information
+
+Display player information using PlaceholderAPI placeholders:
+
+```yaml
+format: "<papi:'player_name'> [<papi:'player_level'>]: <message>"
+```
+
+### Vault Integration
+
+Show player balance or group information:
+
+```yaml
+format: "[<papi:'vault_group'>] <sender_displayname> ($<papi:'vault_eco_balance'>): <message>"
+```
+
+### Custom Placeholders
+
+Combine multiple PlaceholderAPI expansions:
+
+```yaml
+format: "<papi:'player_ping'>ms | <papi:'player_name'>: <message>"
+```
+
+### With MiniMessage Formatting
+
+You can combine PlaceholderAPI placeholders with MiniMessage tags:
+
+```yaml
+format: "<gradient:red:blue><papi:'player_name'></gradient> <gray>»</gray> <message>"
+```
+
+## Common Expansions
+
+Here are some popular PlaceholderAPI expansions that work well with FairyChat:
+
+| Expansion | Example Placeholder | Description |
+|-----------|-------------------|-------------|
+| Player | `<papi:'player_name'>` | Basic player information |
+| Player | `<papi:'player_displayname'>` | Player display name |
+| Player | `<papi:'player_level'>` | Player experience level |
+| Vault | `<papi:'vault_group'>` | Player's permission group |
+| Vault | `<papi:'vault_eco_balance'>` | Player's economy balance |
+| Server | `<papi:'server_name'>` | Server name |
+| Server | `<papi:'server_online'>` | Online player count |
+
+## Finding Expansions
+
+To find available PlaceholderAPI expansions:
+
+```bash
+/papi ecloud list
+```
+
+To download an expansion:
+
+```bash
+/papi ecloud download <expansion_name>
+```
+
+To reload PlaceholderAPI:
+
+```bash
+/papi reload
+```
+
+## Troubleshooting
+
+### Placeholder Not Working
+
+If a placeholder isn't working:
+
+1. Verify the expansion is installed: `/papi ecloud list installed`
+2. Check the correct placeholder syntax on the [PlaceholderAPI wiki](https://wiki.placeholderapi.com/)
+3. Ensure you're using single quotes: `<papi:'placeholder'>` not `<papi:placeholder>`
+4. Test the placeholder directly: `/papi parse me <placeholder>`
+
+### Integration Not Enabled
+
+Check the server logs during startup for:
+
+```
+Enabled integration PlaceholderAPI.
+```
+
+If this message doesn't appear, ensure PlaceholderAPI is properly installed.
+
+## How It Works
+
+FairyChat's PlaceholderAPI integration:
+
+- Detects PlaceholderAPI on server startup
+- Registers as a PlaceholderAPI consumer
+- Processes placeholders in the format `<papi:'placeholder'>`
+- Resolves placeholders in real-time for each message
+
+<Tip>
+For better performance, consider using FairyChat's built-in placeholders when possible, as they don't require external expansion downloads.
+</Tip>
+
+## Related
+
+- [LuckPerms Integration](/integrations/luckperms)
+- [MiniPlaceholders Integration](/integrations/miniplaceholders)
+- [Chat Formatting](/features/chat-formatting)

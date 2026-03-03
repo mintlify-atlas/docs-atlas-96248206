@@ -1,0 +1,218 @@
+---
+title: Chat Clear
+description: Clear chat messages for all players or specific individuals
+icon: 'broom'
+---
+
+The chat clear feature allows administrators to instantly clear the chat window for all players or for a specific player.
+
+## Command
+
+```bash
+/clearchat [player]
+```
+
+<ParamField path="player" type="string" optional>
+  Optional player name. If specified, only that player's chat will be cleared. If omitted, all players' chat will be cleared.
+</ParamField>
+
+## Permission
+
+<ParamField path="fairychat.command.chatclear" type="permission" required>
+  Required to use the `/clearchat` command
+</ParamField>
+
+## Features
+
+<AccordionGroup>
+  <Accordion title="Server-Wide Clear" icon="users">
+    Clear chat for all players on the server:
+    
+    ```bash
+    /clearchat
+    ```
+    
+    This sends 100 empty lines to all online players, effectively clearing their chat window.
+  </Accordion>
+  
+  <Accordion title="Individual Clear" icon="user">
+    Clear chat for a specific player:
+    
+    ```bash
+    /clearchat PlayerName
+    ```
+    
+    Only the specified player's chat will be cleared.
+  </Accordion>
+  
+  <Accordion title="Cross-Server Support" icon="server">
+    When Redis is enabled, the `/clearchat` command works across all connected servers:
+    
+    - `/clearchat` clears chat on all servers
+    - `/clearchat PlayerName` clears chat for that player regardless of which server they're on
+  </Accordion>
+</AccordionGroup>
+
+## Usage Examples
+
+<CodeGroup>
+```bash Clear All Chat
+/clearchat
+```
+
+```bash Clear Specific Player
+/clearchat Steve
+```
+
+```bash With Tab Completion
+/clearchat <TAB>
+# Shows list of online players
+```
+</CodeGroup>
+
+## Multi-Server Behavior
+
+When Redis is configured, the chat clear feature extends across your entire network:
+
+```yaml
+redisCredentials:
+  enabled: true
+  uri: "redis://localhost:6379"
+```
+
+### Network-Wide Clear
+
+```bash
+/clearchat
+```
+
+Clears chat for all players on all connected servers simultaneously.
+
+### Cross-Server Player Clear
+
+```bash
+/clearchat PlayerName
+```
+
+Clears chat for the specified player even if they're on a different server in your network.
+
+<Info>
+  You don't need to specify which server the player is on - FairyChat automatically finds them across your network.
+</Info>
+
+## Common Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Spam Cleanup" icon="trash">
+    Quickly clear spam or inappropriate messages from all players' view.
+  </Card>
+  <Card title="Event Preparation" icon="flag">
+    Clear chat before making an important announcement to ensure it's visible.
+  </Card>
+  <Card title="Player Support" icon="headset">
+    Clear a specific player's chat to help them focus on instructions.
+  </Card>
+  <Card title="Fresh Start" icon="rotate">
+    Clear chat after resolving an argument or heated discussion.
+  </Card>
+</CardGroup>
+
+## How It Works
+
+When you execute the `/clearchat` command:
+
+1. FairyChat sends 100 empty lines to the target player(s)
+2. This pushes all previous messages out of their chat window
+3. A confirmation message is sent to the command executor
+4. If Redis is enabled, the clear is propagated to all servers
+
+<Note>
+  The chat clear is client-side only. It doesn't delete messages from server logs or console output. Messages are simply pushed out of view in the player's chat window.
+</Note>
+
+## Best Practices
+
+<Steps>
+  <Step title="Communicate Intent">
+    Inform players before clearing chat server-wide, or send a message immediately after:
+    
+    ```bash
+    /clearchat
+    /broadcast Chat has been cleared for maintenance
+    ```
+  </Step>
+  
+  <Step title="Use Selectively">
+    For individual issues, use the player-specific clear:
+    
+    ```bash
+    /clearchat PlayerName
+    ```
+    
+    This avoids disrupting other players' conversations.
+  </Step>
+  
+  <Step title="Follow Up">
+    After clearing chat, provide context or instructions so players understand why.
+  </Step>
+</Steps>
+
+## Limitations
+
+<Warning>
+  - Chat clear only affects the visual display in players' chat windows
+  - Messages are still logged in server console and log files
+  - Players can scroll up to see older messages (until they're pushed too far)
+  - Chat mods or clients may store chat history separately
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Command not working" icon="circle-xmark">
+    **Check permissions:**
+    ```yaml
+    fairychat.command.chatclear
+    ```
+    
+    Make sure you or your admin group has this permission.
+  </Accordion>
+  
+  <Accordion title="Not clearing on all servers" icon="server">
+    **Verify Redis configuration:**
+    ```yaml
+    redisCredentials:
+      enabled: true
+      uri: "redis://localhost:6379"
+    ```
+    
+    Ensure all servers are connected to the same Redis instance.
+  </Accordion>
+  
+  <Accordion title="Can't find player" icon="user-slash">
+    **Player must be online:**
+    
+    The `/clearchat PlayerName` command only works for online players. Tab completion shows only online players across your network.
+  </Accordion>
+</AccordionGroup>
+
+## Administrative Tips
+
+<Tip>
+  **Quick Announcement Pattern:**
+  
+  1. `/clearchat` - Clear all chat
+  2. `/broadcast <important message>` - Send your announcement
+  
+  This ensures your broadcast is the first thing players see in their chat.
+</Tip>
+
+<Tip>
+  **Combine with other moderation:**
+  
+  ```bash
+  /mute SpammerName
+  /clearchat
+  /broadcast Please keep chat clean and respectful
+  ```
+</Tip>

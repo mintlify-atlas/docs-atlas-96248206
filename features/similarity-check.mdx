@@ -1,0 +1,422 @@
+---
+title: Similarity Check
+description: Prevent duplicate and similar message spam with advanced algorithms
+icon: 'copy'
+---
+
+The similarity check feature prevents players from sending the same or very similar messages repeatedly, reducing spam and improving chat quality.
+
+## How It Works
+
+FairyChat compares each message a player sends with their recent messages using sophisticated similarity algorithms. If a new message is too similar to a recent one, it's blocked.
+
+<Frame>
+  <div style={{padding: '20px', background: '#1a1a1a', borderRadius: '8px', fontFamily: 'monospace'}}>
+    <span style={{color: '#ff4444'}}>✗ Message blocked</span><br/>
+    <span style={{color: '#666'}}>Player1: Hello everyone!</span><br/>
+    <span style={{color: '#666'}}>Player1: Hello everyone! (blocked - 100% similar)</span><br/>
+    <span style={{color: '#666'}}>Player1: Hello everyone!! (blocked - 95% similar)</span><br/>
+    <span style={{color: '#44ff44'}}>✓ Message allowed</span><br/>
+    <span style={{color: '#aaa'}}>Player1: How is everyone doing?</span>
+  </div>
+</Frame>
+
+## Configuration
+
+Configure similarity checking in your `config.yml`:
+
+```yaml
+# Prevent duplicate messages from being sent.
+preventSimilarMessages: true
+
+# How similar the messages have to be to be considered a duplicate.
+similarityPercentage: 0.75
+
+# The similarity algorithm that should be used.
+# Supported algorithms:
+# LEVENSHTEIN, JARO_WINKLER, JARO, DICE_COEFFICIENT
+similarityAlgorithm: LEVENSHTEIN
+
+# How long the last messages should be cached for
+similarityMessageCacheSeconds: 5
+```
+
+## Configuration Options
+
+<ParamField path="preventSimilarMessages" type="boolean" required>
+  Enable or disable the similarity check feature.
+  
+  **Default:** `true`
+</ParamField>
+
+<ParamField path="similarityPercentage" type="double" required>
+  The similarity threshold (0.0 to 1.0). Messages with similarity above this value are blocked.
+  
+  - `0.0` = No messages blocked (all different)
+  - `0.5` = 50% similar or more = blocked
+  - `0.75` = 75% similar or more = blocked (recommended)
+  - `1.0` = Only exact duplicates blocked
+  
+  **Default:** `0.75`
+</ParamField>
+
+<ParamField path="similarityAlgorithm" type="enum" required>
+  The algorithm used to calculate message similarity.
+  
+  **Options:** `LEVENSHTEIN`, `JARO_WINKLER`, `JARO`, `DICE_COEFFICIENT`
+  
+  **Default:** `LEVENSHTEIN`
+</ParamField>
+
+<ParamField path="similarityMessageCacheSeconds" type="int" required>
+  How long (in seconds) to remember previous messages for comparison.
+  
+  **Default:** `5`
+</ParamField>
+
+## Similarity Algorithms
+
+FairyChat supports four different algorithms, each with unique characteristics:
+
+<Tabs>
+  <Tab title="LEVENSHTEIN (Recommended)">
+    ```yaml
+    similarityAlgorithm: LEVENSHTEIN
+    ```
+    
+    **Levenshtein Distance** measures the minimum number of single-character edits needed to transform one string into another.
+    
+    <CardGroup cols={2}>
+      <Card title="Best For" icon="check">
+        - General purpose spam prevention
+        - Detecting typo variations
+        - Most balanced algorithm
+      </Card>
+      <Card title="Characteristics" icon="info">
+        - Catches: "Hello" vs "Helo" (one deletion)
+        - Catches: "spam" vs "spamm" (one insertion)
+        - Good balance of strictness
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="JARO_WINKLER">
+    ```yaml
+    similarityAlgorithm: JARO_WINKLER
+    ```
+    
+    **Jaro-Winkler** gives more weight to matching prefixes, making it better at catching messages that start the same.
+    
+    <CardGroup cols={2}>
+      <Card title="Best For" icon="check">
+        - Detecting prefix spam
+        - Messages with common starts
+        - Names and usernames
+      </Card>
+      <Card title="Characteristics" icon="info">
+        - Very strict on prefix matches
+        - Catches: "Hello world" vs "Hello there"
+        - More lenient on suffix differences
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="JARO">
+    ```yaml
+    similarityAlgorithm: JARO
+    ```
+    
+    **Jaro Similarity** focuses on character matches and transpositions.
+    
+    <CardGroup cols={2}>
+      <Card title="Best For" icon="check">
+        - Character scrambling detection
+        - Transposition spam
+        - Reordered words
+      </Card>
+      <Card title="Characteristics" icon="info">
+        - Catches: "spam" vs "spma"
+        - Catches: "hello" vs "hlelo"
+        - Good for reordered characters
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="DICE_COEFFICIENT">
+    ```yaml
+    similarityAlgorithm: DICE_COEFFICIENT
+    ```
+    
+    **Dice Coefficient** compares bigrams (2-character sequences) between strings.
+    
+    <CardGroup cols={2}>
+      <Card title="Best For" icon="check">
+        - Longer messages
+        - Phrase similarity
+        - Word pattern matching
+      </Card>
+      <Card title="Characteristics" icon="info">
+        - Analyzes 2-character pairs
+        - Good for longer text
+        - Less sensitive to single chars
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Algorithm Comparison
+
+| Algorithm | Speed | Accuracy | Best Use Case |
+|-----------|-------|----------|---------------|
+| **LEVENSHTEIN** | Fast | High | General purpose (recommended) |
+| **JARO_WINKLER** | Very Fast | High | Prefix-based spam |
+| **JARO** | Very Fast | Medium | Character reordering |
+| **DICE_COEFFICIENT** | Fast | Medium-High | Longer messages |
+
+## Recommended Configurations
+
+<Tabs>
+  <Tab title="Lenient">
+    ```yaml
+    # For servers that want minimal spam blocking
+    preventSimilarMessages: true
+    similarityPercentage: 0.90
+    similarityAlgorithm: LEVENSHTEIN
+    similarityMessageCacheSeconds: 3
+    ```
+    
+    Only blocks nearly identical messages.
+  </Tab>
+  
+  <Tab title="Balanced (Recommended)">
+    ```yaml
+    # Recommended for most servers
+    preventSimilarMessages: true
+    similarityPercentage: 0.75
+    similarityAlgorithm: LEVENSHTEIN
+    similarityMessageCacheSeconds: 5
+    ```
+    
+    Good balance between spam prevention and user freedom.
+  </Tab>
+  
+  <Tab title="Strict">
+    ```yaml
+    # For servers with severe spam problems
+    preventSimilarMessages: true
+    similarityPercentage: 0.60
+    similarityAlgorithm: JARO_WINKLER
+    similarityMessageCacheSeconds: 10
+    ```
+    
+    Aggressive spam blocking with longer cache time.
+  </Tab>
+  
+  <Tab title="Disabled">
+    ```yaml
+    # For small, trusted communities
+    preventSimilarMessages: false
+    ```
+    
+    No similarity checking.
+  </Tab>
+</Tabs>
+
+## Bypass Permission
+
+<ParamField path="fairychat.bypass.similarity" type="permission">
+  Players with this permission can bypass similarity checks and send repeated messages.
+</ParamField>
+
+Grant this permission to:
+- Staff members (for announcements)
+- Bots and automated systems
+- Trusted VIP players (optional)
+
+```yaml
+permissions:
+  - fairychat.bypass.similarity
+```
+
+## Message Cache
+
+The similarity check maintains a cache of recent messages for each player:
+
+```yaml
+similarityMessageCacheSeconds: 5
+```
+
+<Info>
+  Messages are only compared against messages sent within the cache window. After `similarityMessageCacheSeconds`, old messages are forgotten and can be sent again.
+</Info>
+
+### Cache Examples
+
+<CodeGroup>
+```yaml Short Cache (3 seconds)
+similarityMessageCacheSeconds: 3
+# Players can repeat messages after 3 seconds
+# Good for: Active conversations
+```
+
+```yaml Medium Cache (5 seconds)
+similarityMessageCacheSeconds: 5
+# Players can repeat messages after 5 seconds
+# Good for: Most servers (recommended)
+```
+
+```yaml Long Cache (10 seconds)
+similarityMessageCacheSeconds: 10
+# Players can repeat messages after 10 seconds
+# Good for: Preventing persistent spam
+```
+</CodeGroup>
+
+## Similarity Percentage Examples
+
+Understanding how `similarityPercentage` affects blocking:
+
+<AccordionGroup>
+  <Accordion title="0.90 (90%) - Very Lenient" icon="check">
+    Only blocks nearly identical messages:
+    
+    - ✓ "Hello everyone!" → "Hello everyone!!" (allowed)
+    - ✓ "spam" → "spamm" (allowed)
+    - ✗ "Hello" → "Hello" (blocked - 100% match)
+  </Accordion>
+  
+  <Accordion title="0.75 (75%) - Balanced (Recommended)" icon="balance-scale">
+    Blocks similar messages with minor changes:
+    
+    - ✓ "Hello everyone!" → "Hi everyone!" (allowed - 70% similar)
+    - ✗ "Hello everyone!" → "Hello everyone!!" (blocked - 95% similar)
+    - ✗ "spam" → "spamm" (blocked - 80% similar)
+  </Accordion>
+  
+  <Accordion title="0.60 (60%) - Strict" icon="shield">
+    Blocks even moderately similar messages:
+    
+    - ✓ "Hello everyone!" → "Hey there!" (allowed - 40% similar)
+    - ✗ "Hello everyone!" → "Hi everyone!" (blocked - 70% similar)
+    - ✗ "Buy now!" → "Buy today!" (blocked - 65% similar)
+  </Accordion>
+</AccordionGroup>
+
+## Combining with Cooldowns
+
+For maximum spam protection, combine similarity checking with [chat cooldowns](/features/cooldowns):
+
+```yaml
+# Similarity Check
+preventSimilarMessages: true
+similarityPercentage: 0.75
+similarityAlgorithm: LEVENSHTEIN
+similarityMessageCacheSeconds: 5
+
+# Cooldown
+cooldownStrategy: MESSAGE_THRESHOLD
+messageThresholdAmount: 3
+messageThresholdCooldown: 5
+```
+
+This combination prevents:
+- Repeated/similar messages (similarity check)
+- Rapid-fire different messages (cooldowns)
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Too many messages blocked" icon="ban">
+    **Reduce sensitivity:**
+    
+    ```yaml
+    similarityPercentage: 0.85  # Increase threshold
+    similarityMessageCacheSeconds: 3  # Reduce cache time
+    ```
+    
+    Or switch to a more lenient algorithm:
+    ```yaml
+    similarityAlgorithm: DICE_COEFFICIENT
+    ```
+  </Accordion>
+  
+  <Accordion title="Not blocking enough spam" icon="message">
+    **Increase sensitivity:**
+    
+    ```yaml
+    similarityPercentage: 0.65  # Decrease threshold
+    similarityMessageCacheSeconds: 10  # Increase cache time
+    ```
+    
+    Or switch to a stricter algorithm:
+    ```yaml
+    similarityAlgorithm: JARO_WINKLER
+    ```
+  </Accordion>
+  
+  <Accordion title="Staff can't repeat announcements" icon="bullhorn">
+    **Grant bypass permission:**
+    
+    ```yaml
+    permissions:
+      - fairychat.bypass.similarity
+    ```
+    
+    Add to your staff permission groups.
+  </Accordion>
+  
+  <Accordion title="Legitimate messages blocked" icon="exclamation-triangle">
+    **Adjust algorithm or threshold:**
+    
+    1. Try LEVENSHTEIN (most balanced)
+    2. Increase similarityPercentage to 0.80
+    3. Reduce cache time to 3 seconds
+    4. Grant bypass to affected players (temporary)
+  </Accordion>
+</AccordionGroup>
+
+## Performance Notes
+
+<Info>
+  All similarity algorithms are highly optimized:
+  - Cache is stored in memory
+  - Algorithms run in milliseconds
+  - Negligible impact even with hundreds of players
+  - Old cache entries are automatically cleaned up
+</Info>
+
+## Best Practices
+
+<Steps>
+  <Step title="Start with defaults">
+    Begin with `LEVENSHTEIN` algorithm and `0.75` threshold:
+    
+    ```yaml
+    similarityAlgorithm: LEVENSHTEIN
+    similarityPercentage: 0.75
+    ```
+  </Step>
+  
+  <Step title="Monitor player feedback">
+    Listen to players about false positives and adjust accordingly.
+  </Step>
+  
+  <Step title="Grant bypasses appropriately">
+    Give `fairychat.bypass.similarity` to:
+    - All staff members
+    - Bots and automated systems
+    - Consider VIP players
+  </Step>
+  
+  <Step title="Combine with cooldowns">
+    Use both similarity checking and cooldowns for comprehensive spam protection.
+  </Step>
+  
+  <Step title="Test changes">
+    Test configuration changes on a test server or during low-traffic periods.
+  </Step>
+</Steps>
+
+<Tip>
+  The default configuration (`LEVENSHTEIN` at `0.75`) works well for most servers. Only adjust if you have specific spam patterns or player complaints.
+</Tip>

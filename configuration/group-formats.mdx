@@ -1,0 +1,215 @@
+---
+title: Group Formats
+description: Configure per-group chat formats based on player permissions
+---
+
+Group formats allow you to define different chat message formats for players based on their permission groups. This is perfect for highlighting staff members, VIPs, or different ranks on your server.
+
+## How Group Formats Work
+
+FairyChat checks a player's permission groups and applies the appropriate chat format. If a player belongs to multiple groups, the format is determined by the permission system's group priority (e.g., LuckPerms weight).
+
+<Info>
+Group formats currently support **LuckPerms** as the permission system.
+</Info>
+
+## Configuration
+
+Group formats are defined in the `groupFormats` section of your `config.yml`:
+
+<ParamField path="groupFormats" type="map">
+  A map of group names to their corresponding chat formats. Each format uses MiniMessage syntax and supports all available placeholders.
+  
+  **Default configuration:**
+  ```yaml
+  groupFormats:
+    admin: "<dark_red><sender_displayname></dark_red> <dark_gray>»</dark_gray> <white><message></white>"
+  ```
+</ParamField>
+
+## Basic Example
+
+Here's a simple configuration with formats for different ranks:
+
+```yaml
+groupFormats:
+  owner: "<gradient:red:gold>[OWNER]</gradient> <sender_displayname> » <message>"
+  admin: "<dark_red>[ADMIN]</dark_red> <sender_displayname> » <white><message></white>"
+  moderator: "<blue>[MOD]</blue> <sender_displayname> » <gray><message></gray>"
+  vip: "<gold>[VIP]</gold> <sender_displayname> » <yellow><message></yellow>"
+```
+
+## Using Placeholders
+
+Group formats support all placeholder types:
+
+- **Built-in placeholders:** `<sender_name>`, `<sender_displayname>`, `<message>`, `<server_name>`
+- **PlaceholderAPI:** `<papi:placeholder_name>`
+- **MiniPlaceholders:** Standard MiniPlaceholder syntax
+- **LuckPerms placeholders:** `<fc_luckperms_prefix>`, `<fc_luckperms_suffix>`, etc.
+
+### Example with LuckPerms Placeholders
+
+```yaml
+groupFormats:
+  admin: "<fc_luckperms_prefix><sender_displayname> » <dark_red><message></dark_red>"
+  vip: "<fc_luckperms_prefix><sender_displayname> » <gold><message></gold>"
+```
+
+### Example with PlaceholderAPI
+
+```yaml
+groupFormats:
+  admin: "<papi:vault_prefix><sender_displayname> » <white><message></white>"
+  default: "<gray><sender_name></gray> » <message>"
+```
+
+## Advanced Examples
+
+### Multi-Server Network
+
+For networks with multiple servers, include the server name:
+
+```yaml
+groupFormats:
+  admin: "[<server_name>] <dark_red>[ADMIN]</dark_red> <sender_displayname> » <message>"
+  vip: "[<server_name>] <gold>[VIP]</gold> <sender_displayname> » <message>"
+```
+
+### World-Based Formats
+
+Include the world name using the `<fc_world_name>` placeholder:
+
+```yaml
+groupFormats:
+  admin: "[<fc_world_name>] <dark_red><sender_displayname></dark_red> » <message>"
+  player: "[<fc_world_name>] <gray><sender_displayname></gray> » <message>"
+```
+
+### Color-Coded Messages
+
+Use LuckPerms meta keys for customizable colors:
+
+```yaml
+groupFormats:
+  vip: "<fc_luckperms_prefix><fc_luckperms_username_color><sender_name></fc_luckperms_username_color> » <fc_luckperms_message_color><message></fc_luckperms_message_color>"
+```
+
+Then set colors per player:
+```
+/lp user Steve meta set username-color "<gold>"
+/lp user Steve meta set message-color "<yellow>"
+```
+
+### Gradient Effects
+
+Create eye-catching formats with gradients:
+
+```yaml
+groupFormats:
+  owner: "<gradient:red:gold:yellow>[OWNER]</gradient> <gradient:red:gold><sender_displayname></gradient> » <white><message></white>"
+  admin: "<gradient:dark_red:red>[ADMIN]</gradient> <sender_displayname> » <message>"
+  vip: "<gradient:gold:yellow>[VIP]</gradient> <sender_displayname> » <message>"
+```
+
+## Fallback to Default Format
+
+If a player doesn't belong to any group defined in `groupFormats`, FairyChat uses the default `chatFormat` setting:
+
+```yaml
+chatFormat: "<#5E548E><sender_displayname></#5E548E> <dark_gray>»</dark_gray> <gray><message></gray>"
+```
+
+## Setting Up with LuckPerms
+
+### 1. Create Groups
+
+Create your permission groups in LuckPerms:
+
+```
+/lp creategroup admin
+/lp creategroup vip
+/lp creategroup moderator
+```
+
+### 2. Add Players to Groups
+
+```
+/lp user <player> parent add admin
+/lp user <player> parent add vip
+```
+
+### 3. Configure Group Formats
+
+Add the corresponding formats to your `config.yml`:
+
+```yaml
+groupFormats:
+  admin: "<dark_red>[ADMIN]</dark_red> <sender_displayname> » <message>"
+  vip: "<gold>[VIP]</gold> <sender_displayname> » <message>"
+```
+
+### 4. Reload Configuration
+
+```
+/fairychat reload
+```
+
+## Group Priority
+
+When a player belongs to multiple groups, LuckPerms determines which format to use based on group weight. The group with the highest weight takes precedence.
+
+### Setting Group Weights
+
+```
+/lp group admin setweight 100
+/lp group moderator setweight 50
+/lp group vip setweight 10
+```
+
+In this example, if a player is both an admin and a VIP, the admin format will be used.
+
+## Tips and Best Practices
+
+<Tip>
+**Test your formats** - Use `/fairychat reload` to test configuration changes instantly without restarting the server.
+</Tip>
+
+<Tip>
+**Keep it consistent** - Use a consistent style across all group formats for a professional look.
+</Tip>
+
+<Tip>
+**Use prefixes wisely** - Instead of hardcoding prefixes in the format, consider using LuckPerms prefixes with `<fc_luckperms_prefix>` for easier management.
+</Tip>
+
+<Warning>
+Make sure your group names in `config.yml` exactly match the group names in LuckPerms. Group names are case-sensitive.
+</Warning>
+
+## Troubleshooting
+
+### Format Not Applying
+
+1. **Check group name** - Ensure the group name in `config.yml` matches LuckPerms exactly (case-sensitive)
+2. **Verify player is in group** - Use `/lp user <player> info` to check group membership
+3. **Check group weight** - If the player is in multiple groups, verify the correct group has the highest weight
+4. **Reload configuration** - Run `/fairychat reload` after making changes
+
+### Placeholders Not Working
+
+1. **PlaceholderAPI** - Ensure PlaceholderAPI is installed and required expansions are downloaded
+2. **MiniPlaceholders** - Verify MiniPlaceholders is installed with the necessary expansions
+3. **Syntax** - Check that you're using the correct syntax (e.g., `<papi:placeholder_name>` for PAPI)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Placeholders" icon="brackets-curly" href="/configuration/placeholders">
+    Learn about available placeholders
+  </Card>
+  
+  <Card title="Custom Messages" icon="message" href="/configuration/custom-messages">
+    Configure join/quit messages
+  </Card>
+</CardGroup>

@@ -1,0 +1,139 @@
+---
+title: Private Messaging
+description: Send private messages between players with /pm and /r commands
+icon: 'envelope'
+---
+
+FairyChat provides a robust private messaging system that works seamlessly across multiple servers when Redis is configured.
+
+## Commands
+
+<CardGroup cols={2}>
+  <Card title="/pm" icon="paper-plane">
+    Send a private message to another player
+    
+    **Usage:** `/pm <username> <message>`
+  </Card>
+  <Card title="/r" icon="reply">
+    Reply to the last player who messaged you
+    
+    **Usage:** `/r <message>`
+  </Card>
+</CardGroup>
+
+## Features
+
+<AccordionGroup>
+  <Accordion title="Cross-Server Support" icon="server">
+    When Redis is enabled, private messages work across all connected servers. You can message a player on any server in your network without needing to know which server they're on.
+  </Accordion>
+  
+  <Accordion title="Tab Completion" icon="keyboard">
+    Tab completion is available for player names across all servers in your network, making it easy to find and message players.
+  </Accordion>
+  
+  <Accordion title="Reply Tracking" icon="clock-rotate-left">
+    The `/r` command automatically tracks your last conversation partner, allowing quick replies without typing their name again.
+  </Accordion>
+</AccordionGroup>
+
+## Configuration
+
+Private messaging can be configured in your `config.yml` file:
+
+```yaml
+privateMessaging:
+  # Enable or disable private messaging
+  enabled: true
+  
+  # Format for outgoing private messages (messages you send)
+  outgoingFormat: "<dark_gray>[<gray>You</gray> → <receiver_displayname>]</dark_gray> <message>"
+  
+  # Format for incoming private messages (messages you receive)
+  incomingFormat: "<dark_gray>[<sender_displayname> → <gray>You</gray>]</dark_gray> <message>"
+  
+  # Format for the social spy feature (staff viewing PMs)
+  socialSpyFormat: "<dark_gray>[SPY]</dark_gray> <sender_name> → <receiver_name>: <message>"
+```
+
+### Available Placeholders
+
+<ParamField path="sender_name" type="string">
+  The username of the message sender
+</ParamField>
+
+<ParamField path="sender_displayname" type="string">
+  The display name of the message sender
+</ParamField>
+
+<ParamField path="receiver_name" type="string">
+  The username of the message recipient
+</ParamField>
+
+<ParamField path="receiver_displayname" type="string">
+  The display name of the message recipient
+</ParamField>
+
+<ParamField path="message" type="string">
+  The actual message content
+</ParamField>
+
+<ParamField path="server_name" type="string">
+  The server name (from config.yml)
+</ParamField>
+
+<Info>
+  All MiniMessage formatting and MiniPlaceholders are supported in private message formats. You can also use PlaceholderAPI placeholders with `<papi:placeholder_name>` syntax.
+</Info>
+
+## Multi-Server Setup
+
+To enable private messaging across multiple servers, you need to configure Redis:
+
+```yaml
+redisCredentials:
+  enabled: true
+  uri: "redis://localhost:6379"
+```
+
+Once Redis is configured and enabled:
+
+1. Players can send PMs to anyone on any connected server
+2. Tab completion will show players from all servers
+3. The reply feature works across servers
+4. No additional configuration needed
+
+## Example Formats
+
+<CodeGroup>
+```yaml Clean & Simple
+privateMessaging:
+  outgoingFormat: "<gray>→ <receiver_name>:</gray> <white><message></white>"
+  incomingFormat: "<gray>← <sender_name>:</gray> <white><message></white>"
+```
+
+```yaml Colored with Gradient
+privateMessaging:
+  outgoingFormat: "<gradient:blue:light_purple>[You → <receiver_displayname>]</gradient> <message>"
+  incomingFormat: "<gradient:light_purple:blue>[<sender_displayname> → You]</gradient> <message>"
+```
+
+```yaml With Hover Text
+privateMessaging:
+  outgoingFormat: "<hover:show_text:'Sent to <receiver_name>'><dark_gray>[→]</dark_gray></hover> <receiver_displayname>: <message>"
+  incomingFormat: "<hover:show_text:'From <sender_name>'><dark_gray>[←]</dark_gray></hover> <sender_displayname>: <message>"
+```
+</CodeGroup>
+
+## Social Spy
+
+Staff members can monitor private messages using the social spy feature (if implemented in your configuration). The format for social spy messages can be customized:
+
+```yaml
+privateMessaging:
+  socialSpyFormat: "<dark_red>[SPY]</dark_red> <sender_name> → <receiver_name>: <gray><message></gray>"
+```
+
+<Tip>
+  Use different colors or gradients for social spy messages to make them easily distinguishable from regular chat.
+</Tip>

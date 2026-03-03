@@ -1,0 +1,94 @@
+---
+title: Ignore Command
+description: Block messages from specific players
+---
+
+The `/ignore` command allows players to toggle whether they want to see messages from specific players. This is useful for blocking unwanted communication.
+
+## Usage
+
+```
+/ignore <username>
+```
+
+### Arguments
+
+- `<username>` - The player to ignore or unignore (supports tab completion)
+
+## Permission
+
+The ignore command has no permission requirements - all players can use it by default.
+
+## Features
+
+### Toggle Functionality
+
+The ignore command works as a toggle:
+- If you haven't ignored the player, executing the command will ignore them
+- If you've already ignored the player, executing the command will unignore them
+
+### Tab Completion
+
+The username argument supports tab completion across all servers, making it easy to find and ignore players.
+
+### Self-Protection
+
+You cannot ignore yourself. The plugin will display an error message if you attempt to do so.
+
+## How It Works
+
+When you ignore a player:
+
+- You won't see any messages they send in public chat
+- You won't receive private messages from them (unless they have the bypass permission)
+- They won't be notified that you've ignored them
+
+### Multi-Server Support
+
+Ignore settings persist across all servers in your network when Redis is configured.
+
+## Related Permissions
+
+### Bypass Permission
+
+```
+fairychat.bypass.ignore
+```
+
+Players with this permission can:
+- Send private messages to players who have ignored them
+- Their messages cannot be blocked by the ignore system
+
+This is useful for staff members who need to be able to contact all players regardless of ignore settings.
+
+## Messages
+
+The plugin provides feedback when using the ignore command:
+
+### Ignoring a Player
+
+When you successfully ignore a player, you'll receive a confirmation message.
+
+### Unignoring a Player
+
+When you unignore a player, you'll receive a confirmation message.
+
+### Error Messages
+
+- **Self-ignore**: You cannot ignore yourself
+
+## Configuration
+
+Customize the ignore command messages in your `config.yml`:
+
+```yaml
+messages:
+  you-cant-ignore-yourself: "<red>You can't ignore yourself!"
+  you-ignored-user: "<green>You are now ignoring <name>."
+  you-unignored-user: "<green>You are no longer ignoring <name>."
+```
+
+## Related Features
+
+- [Private Messaging](/commands/private-messaging) - Private messages respect ignore settings
+- [Permissions](/permissions) - See all ignore-related permissions

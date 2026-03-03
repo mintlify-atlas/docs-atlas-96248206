@@ -1,0 +1,188 @@
+---
+title: Placeholders
+description: Learn about built-in placeholders, PlaceholderAPI, MiniPlaceholders, and LuckPerms integration
+---
+
+FairyChat supports multiple placeholder systems to create dynamic and customizable chat formats.
+
+## Built-in Placeholders
+
+FairyChat provides several built-in placeholders that work out of the box:
+
+<ParamField path="<sender_name>" type="string">
+  The username of the player who sent the message.
+  
+  **Example:** `Steve`
+</ParamField>
+
+<ParamField path="<sender_displayname>" type="string">
+  The display name of the player who sent the message. This may include formatting or custom names set by other plugins.
+  
+  **Example:** `[Admin] Steve`
+</ParamField>
+
+<ParamField path="<server_name>" type="string">
+  The server name configured in the `config.yml` file. Useful for multi-server networks.
+  
+  **Configuration:** Set via `serverName` in config.yml
+</ParamField>
+
+<ParamField path="<message>" type="string">
+  The actual message content sent by the player.
+</ParamField>
+
+<ParamField path="<fc_world_name>" type="string">
+  The customized world name. Can be configured in the `worldNames` section of config.yml.
+  
+  **Default values:**
+  - `world` → Overworld (with green gradient)
+  - `world_nether` → Nether (with red gradient)
+  - `world_the_end` → End (with purple gradient)
+</ParamField>
+
+## PlaceholderAPI Integration
+
+FairyChat supports [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) placeholders using a special syntax:
+
+### Syntax
+
+```
+<papi:placeholder_name>
+```
+
+### Examples
+
+```yaml
+chatFormat: "<papi:player_name> » <message>"
+```
+
+```yaml
+chatFormat: "[<papi:player_world>] <papi:player_displayname> » <message>"
+```
+
+```yaml
+groupFormats:
+  vip: "<papi:vault_prefix><sender_displayname> » <gold><message></gold>"
+```
+
+<Note>
+Make sure PlaceholderAPI is installed and the required expansions are downloaded for the placeholders you want to use.
+</Note>
+
+## MiniPlaceholders Integration
+
+FairyChat natively supports [MiniPlaceholders](https://github.com/MiniPlaceholders/MiniPlaceholders). Simply install MiniPlaceholders and download the expansions you need.
+
+### Usage
+
+MiniPlaceholders use their standard syntax:
+
+```yaml
+chatFormat: "<player:name> » <message>"
+```
+
+```yaml
+chatFormat: "[<server:name>] <player:displayname> » <message>"
+```
+
+### Available Expansions
+
+Refer to the [MiniPlaceholders Wiki](https://github.com/MiniPlaceholders/MiniPlaceholders/wiki/Placeholders) for a complete list of available placeholders and expansions.
+
+## LuckPerms Placeholders
+
+FairyChat includes built-in LuckPerms placeholders without requiring additional plugins. These placeholders automatically retrieve permission data from LuckPerms.
+
+### Available Placeholders
+
+<ParamField path="<fc_luckperms_prefix>" type="string">
+  The primary prefix of the player from LuckPerms.
+  
+  **Example:** `[Admin]`
+</ParamField>
+
+<ParamField path="<fc_luckperms_suffix>" type="string">
+  The primary suffix of the player from LuckPerms.
+  
+  **Example:** `[VIP]`
+</ParamField>
+
+<ParamField path="<fc_luckperms_prefixes>" type="string">
+  All prefixes of the player from LuckPerms.
+</ParamField>
+
+<ParamField path="<fc_luckperms_suffixes>" type="string">
+  All suffixes of the player from LuckPerms.
+</ParamField>
+
+<ParamField path="<fc_luckperms_username_color>" type="string">
+  The color for the username, retrieved from the LuckPerms meta key `username-color`.
+  
+  **Configuration:** Set in LuckPerms using `/lp user <player> meta set username-color <color>`
+</ParamField>
+
+<ParamField path="<fc_luckperms_message_color>" type="string">
+  The color for the message, retrieved from the LuckPerms meta key `message-color`.
+  
+  **Configuration:** Set in LuckPerms using `/lp user <player> meta set message-color <color>`
+</ParamField>
+
+<ParamField path="<fc_luckperms_prefix_by_group:group_name>" type="string">
+  Shows the prefix of a specific group if the player is a member of that group.
+  
+  **Example:** `<fc_luckperms_prefix_by_group:admin>` - Shows the admin group prefix if the player is in the admin group
+</ParamField>
+
+### LuckPerms Example
+
+```yaml
+chatFormat: "<fc_luckperms_prefix><fc_luckperms_username_color><sender_name></fc_luckperms_username_color><fc_luckperms_suffix> » <fc_luckperms_message_color><message></fc_luckperms_message_color>"
+```
+
+## Combining Placeholder Systems
+
+You can mix and match different placeholder systems in your configuration:
+
+```yaml
+chatFormat: "<fc_luckperms_prefix><papi:player_displayname> [<fc_world_name>] » <message>"
+```
+
+This example combines:
+- **LuckPerms** placeholder for prefix
+- **PlaceholderAPI** placeholder for display name
+- **Built-in** placeholder for world name
+- **Built-in** placeholder for message
+
+## Placeholder Self-Closing Tags
+
+<ParamField path="placeholderSelfClosingTags" type="boolean" default={true}>
+  When enabled, internal placeholders use self-closing tags. This means styling will not be applied to child text components.
+  
+  **Configuration:** Set in `config.yml`
+</ParamField>
+
+## Tips for Using Placeholders
+
+<Tip>
+**Test your formats** - Use `/fairychat reload` to test configuration changes without restarting the server.
+</Tip>
+
+<Tip>
+**Keep it readable** - Don't overcomplicate your chat format with too many placeholders. Players should be able to read messages easily.
+</Tip>
+
+<Warning>
+Some PlaceholderAPI expansions may cause performance issues if they perform expensive operations. Test your configuration and monitor server performance.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Group Formats" icon="users" href="/configuration/group-formats">
+    Use placeholders in per-group formats
+  </Card>
+  
+  <Card title="Custom Messages" icon="message" href="/configuration/custom-messages">
+    Apply placeholders to join/quit messages
+  </Card>
+</CardGroup>

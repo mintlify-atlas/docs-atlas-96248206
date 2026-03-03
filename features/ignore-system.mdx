@@ -1,0 +1,291 @@
+---
+title: Ignore System
+description: Allow players to ignore messages from other players
+icon: 'eye-slash'
+---
+
+The ignore system allows players to stop seeing messages from specific players they wish to avoid, improving their chat experience.
+
+## Command
+
+```bash
+/ignore <username>
+```
+
+Toggle ignoring a specific player. Running the command again on the same player will unignore them.
+
+<Card title="Toggle Behavior" icon="toggle-on">
+  The ignore command works as a toggle:
+  - First use: Ignores the player
+  - Second use: Unignores the player
+</Card>
+
+## Permissions
+
+<ParamField path="fairychat.bypass.ignore" type="permission">
+  Players with this permission cannot be ignored. Typically given to staff members to ensure important messages are always visible.
+</ParamField>
+
+## Features
+
+<AccordionGroup>
+  <Accordion title="Two-Way Blocking" icon="ban">
+    When Player A ignores Player B:
+    - Player A won't see Player B's chat messages
+    - Player A won't see Player B's private messages
+    - Player B cannot send private messages to Player A
+  </Accordion>
+  
+  <Accordion title="Cross-Server Support" icon="server">
+    When Redis is enabled, ignore settings sync across all servers:
+    - Ignore a player on one server, they're ignored on all servers
+    - Settings persist across server switches
+    - Works seamlessly in multi-server networks
+  </Accordion>
+  
+  <Accordion title="Persistent Storage" icon="database">
+    Ignore preferences are saved to the database and persist across:
+    - Server restarts
+    - Player reconnections
+    - Network transfers
+  </Accordion>
+  
+  <Accordion title="Staff Bypass" icon="shield">
+    Staff members with `fairychat.bypass.ignore` cannot be ignored, ensuring:
+    - Important announcements reach all players
+    - Staff can always communicate with players
+    - Moderation messages are never blocked
+  </Accordion>
+</AccordionGroup>
+
+## Usage Examples
+
+<CodeGroup>
+```bash Ignore a Player
+/ignore AnnoyingPlayer
+# Response: You are now ignoring AnnoyingPlayer
+```
+
+```bash Unignore a Player
+/ignore AnnoyingPlayer
+# Response: You are no longer ignoring AnnoyingPlayer
+```
+
+```bash Try to Ignore Staff
+/ignore AdminName
+# Response: You cannot ignore this player (they have bypass permission)
+```
+</CodeGroup>
+
+## What Gets Blocked
+
+When you ignore a player, you won't see:
+
+<CardGroup cols={2}>
+  <Card title="Public Chat" icon="message">
+    All messages they send in public chat are hidden from you.
+  </Card>
+  <Card title="Private Messages" icon="envelope">
+    They cannot send you private messages, and you won't see any attempts.
+  </Card>
+  <Card title="Mentions" icon="at">
+    Their @mentions of you won't trigger notifications or highlights.
+  </Card>
+  <Card title="Reply Attempts" icon="reply">
+    They cannot use `/r` to reply to you if you've ignored them.
+  </Card>
+</CardGroup>
+
+## What Doesn't Get Blocked
+
+<Warning>
+  Ignoring a player does NOT block:
+  - Server broadcasts (`/broadcast`)
+  - Join/leave messages
+  - Death messages
+  - Achievement messages
+  - Plugin announcements
+  - Staff announcements
+</Warning>
+
+## Database Configuration
+
+Ignore data is stored in the database configured in your `config.yml`:
+
+```yaml
+database:
+  # Database configuration for storing ignore lists
+  type: "H2" # or "MYSQL"
+  host: "localhost"
+  port: 3306
+  database: "fairychat"
+  username: "root"
+  password: "password"
+```
+
+<Tabs>
+  <Tab title="H2 (Default)">
+    ```yaml
+    database:
+      type: "H2"
+    ```
+    
+    H2 is the default embedded database. No additional configuration required - it just works!
+  </Tab>
+  
+  <Tab title="MySQL">
+    ```yaml
+    database:
+      type: "MYSQL"
+      host: "localhost"
+      port: 3306
+      database: "fairychat"
+      username: "root"
+      password: "your_password"
+    ```
+    
+    Use MySQL for better performance in multi-server setups or with many players.
+  </Tab>
+</Tabs>
+
+## Multi-Server Behavior
+
+With Redis enabled, the ignore system works seamlessly across your network:
+
+```yaml
+redisCredentials:
+  enabled: true
+  uri: "redis://localhost:6379"
+```
+
+### Scenario Example
+
+1. Player A ignores Player B on Server 1
+2. Player A switches to Server 2
+3. Player B's messages are still hidden on Server 2
+4. Player A unignores Player B on Server 2
+5. Player A switches back to Server 1
+6. Player B is no longer ignored on Server 1
+
+<Info>
+  Ignore settings are stored in the database and synchronized in real-time across all servers via Redis.
+</Info>
+
+## Managing Ignored Players
+
+While FairyChat doesn't include a built-in `/ignorelist` command in the default configuration, players can:
+
+- Toggle ignore status with `/ignore <player>`
+- Check if someone is ignored by trying to ignore them again (it will toggle off)
+
+<Tip>
+  Consider using a database management tool to view and manage ignore relationships if needed for moderation purposes.
+</Tip>
+
+## Staff Bypass Configuration
+
+To prevent specific players or roles from being ignored:
+
+```yaml
+permissions:
+  - fairychat.bypass.ignore
+```
+
+Add this permission to:
+- Admin ranks
+- Moderator ranks  
+- Support staff
+- Any role that needs guaranteed message delivery
+
+## Common Use Cases
+
+<Steps>
+  <Step title="Player Harassment">
+    A player is being harassed and wants to block the offender:
+    
+    ```bash
+    /ignore HarassingPlayer
+    ```
+  </Step>
+  
+  <Step title="Chat Spam">
+    A player finds another player's messages annoying or spammy:
+    
+    ```bash
+    /ignore SpammyPlayer
+    ```
+  </Step>
+  
+  <Step title="Personal Conflicts">
+    Two players have a conflict and want to avoid each other:
+    
+    ```bash
+    # Both players can ignore each other
+    /ignore OtherPlayer
+    ```
+  </Step>
+  
+  <Step title="Temporary Ignore">
+    A player wants a break from someone temporarily:
+    
+    ```bash
+    /ignore PlayerName
+    # Later...
+    /ignore PlayerName  # Toggle off
+    ```
+  </Step>
+</Steps>
+
+## Best Practices for Admins
+
+<CardGroup cols={2}>
+  <Card title="Staff Bypass" icon="shield-halved">
+    Always give staff members `fairychat.bypass.ignore` to ensure they can communicate with all players.
+  </Card>
+  <Card title="Monitor Abuse" icon="eye">
+    Watch for players abusing the ignore system to avoid legitimate staff communication attempts.
+  </Card>
+  <Card title="Educate Players" icon="book">
+    Inform players that ignoring doesn't replace proper reporting of rule violations.
+  </Card>
+  <Card title="Database Backups" icon="floppy-disk">
+    Regularly backup your database to preserve ignore preferences.
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Ignore not working" icon="triangle-exclamation">
+    **Check database connection:**
+    - Verify database configuration in `config.yml`
+    - Check server logs for database errors
+    - Ensure database is accessible
+  </Accordion>
+  
+  <Accordion title="Can't ignore a player" icon="user-shield">
+    **Player has bypass permission:**
+    
+    The target player likely has `fairychat.bypass.ignore` permission. This is intentional for staff members.
+  </Accordion>
+  
+  <Accordion title="Ignore not syncing across servers" icon="server">
+    **Verify Redis setup:**
+    ```yaml
+    redisCredentials:
+      enabled: true
+      uri: "redis://localhost:6379"
+    ```
+    
+    Ensure all servers:
+    - Have Redis enabled
+    - Connect to the same Redis instance
+    - Use the same database configuration
+  </Accordion>
+  
+  <Accordion title="Lost ignore list after restart" icon="rotate">
+    **Database not persisting:**
+    
+    If using H2, ensure the database file location is persistent. If using MySQL, verify the connection configuration is correct.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,127 @@
+---
+title: Chat Formatting
+description: Customize chat messages with MiniMessage and per-group formats
+icon: 'messages'
+---
+
+FairyChat allows you to fully customize how chat messages appear on your server using MiniMessage format and group-based formats.
+
+## Chat Format
+
+The default chat format can be configured in your `config.yml` file. FairyChat uses MiniMessage syntax for rich text formatting.
+
+### Default Configuration
+
+```yaml
+chatFormat: "<#5E548E><sender_displayname></#5E548E> <dark_gray>»</dark_gray> <gray><message></gray>"
+```
+
+This produces a chat message where the player's display name appears in purple, followed by a dark gray separator and the message in gray.
+
+## Available Placeholders
+
+You can use the following built-in placeholders in your chat format:
+
+<ParamField path="sender_name" type="string">
+  The username of the player who sent the message
+</ParamField>
+
+<ParamField path="sender_displayname" type="string">
+  The display name of the player (may include formatting)
+</ParamField>
+
+<ParamField path="message" type="string">
+  The actual message content sent by the player
+</ParamField>
+
+<ParamField path="server_name" type="string">
+  The server name configured in config.yml (useful for multi-server setups)
+</ParamField>
+
+### External Placeholders
+
+<CardGroup cols={2}>
+  <Card title="MiniPlaceholders" icon="puzzle-piece">
+    All MiniPlaceholders are supported. [View available placeholders](https://github.com/MiniPlaceholders/MiniPlaceholders/wiki/Placeholders)
+  </Card>
+  <Card title="PlaceholderAPI" icon="plug">
+    Use PAPI placeholders with the format: `<papi:placeholder_name>`
+    
+    Example: `<papi:player_displayname>`
+  </Card>
+</CardGroup>
+
+## Per-Group Chat Formats
+
+Create different chat formats for different permission groups. This feature requires a supported permission plugin (LuckPerms).
+
+### Configuration
+
+```yaml
+groupFormats:
+  admin: "<dark_red><sender_displayname></dark_red> <dark_gray>»</dark_gray> <white><message></white>"
+  moderator: "<blue><sender_displayname></blue> <dark_gray>»</dark_gray> <white><message></white>"
+  vip: "<gold><sender_displayname></gold> <dark_gray>»</dark_gray> <gray><message></gray>"
+```
+
+<Note>
+  Group formats take precedence over the default chat format. If a player belongs to multiple groups, the first matching group in the configuration will be used.
+</Note>
+
+## MiniMessage Support
+
+FairyChat fully supports [MiniMessage](https://docs.advntr.dev/minimessage/) syntax for rich text formatting.
+
+### Common Format Examples
+
+<CodeGroup>
+```yaml Gradient Text
+chatFormat: "<gradient:dark_green:green><sender_displayname></gradient> <gray><message></gray>"
+```
+
+```yaml Rainbow Effect
+chatFormat: "<rainbow><sender_displayname></rainbow> <gray><message></gray>"
+```
+
+```yaml Hover & Click Events
+chatFormat: "<hover:show_text:'Click to message'><click:suggest_command:/pm <sender_name> ><sender_displayname></click></hover> <gray>»</gray> <message>"
+```
+</CodeGroup>
+
+## Legacy Color Support
+
+If you're migrating from another chat plugin or have other plugins that use legacy color codes, enable legacy support:
+
+```yaml
+legacyColorSupport: true
+```
+
+<Warning>
+  Only enable this if you have compatibility issues with other plugins that use legacy chat colors (`&` codes).
+</Warning>
+
+## Console Display
+
+When using Redis for multi-server chat, you can control whether chat messages are displayed in the console:
+
+```yaml
+displayChatInConsole: true
+```
+
+## Placeholder Self-Closing Tags
+
+Control whether internal placeholders use self-closing tags (styling won't apply to children of text components):
+
+```yaml
+placeholderSelfClosingTags: true
+```
+
+## Permissions
+
+<ParamField path="fairychat.feature.minimessage" type="permission">
+  Allows players to use MiniMessage formatting and color codes in their chat messages
+</ParamField>
+
+<ParamField path="fairychat.feature.displayitem" type="permission">
+  Allows players to show items in chat using the `<item>` tag
+</ParamField>

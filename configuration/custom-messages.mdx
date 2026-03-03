@@ -1,0 +1,284 @@
+---
+title: Custom Messages
+description: Configure join/quit messages, death messages, and advancement announcements
+---
+
+FairyChat allows you to customize and control various server messages including join/quit events, death messages, and advancement announcements. These messages can be broadcast across your entire network when using Redis.
+
+## Configuration
+
+Custom messages are configured in the `customMessages` section of your `config.yml`:
+
+<ParamField path="customMessages" type="object">
+  Configuration for custom messages including join, quit, death, and advancement messages.
+</ParamField>
+
+## Join Messages
+
+<ParamField path="customMessages.broadcastJoinMessages" type="boolean" default={false}>
+  When enabled, player join messages are broadcast to all servers in your network via Redis.
+  
+  **Use case:** Useful for small networks where you want all players to see when someone joins any server.
+  
+  <Warning>
+  For large networks, broadcasting join messages across all servers may cause spam. Consider keeping this disabled.
+  </Warning>
+</ParamField>
+
+### Example Configuration
+
+```yaml
+customMessages:
+  broadcastJoinMessages: true
+```
+
+## Quit Messages
+
+<ParamField path="customMessages.broadcastQuitMessages" type="boolean" default={false}>
+  When enabled, player quit messages are broadcast to all servers in your network via Redis.
+  
+  <Warning>
+  **Be careful:** With quick connect systems like Velocity, the quit event is triggered after the join event. This means the quit message from the previous server will be sent after the join message on the new server, which can be confusing.
+  </Warning>
+</ParamField>
+
+### Example Configuration
+
+```yaml
+customMessages:
+  broadcastQuitMessages: false
+```
+
+### Recommended Setup for Networks
+
+For networks using Velocity or BungeeCord:
+- Keep `broadcastJoinMessages` and `broadcastQuitMessages` set to `false`
+- Handle join/quit messages at the proxy level instead
+- This prevents duplicate or out-of-order messages
+
+## Death Messages
+
+<ParamField path="customMessages.broadcastDeathMessages" type="boolean" default={true}>
+  When enabled, player death messages are broadcast to all servers in your network via Redis.
+  
+  **Use case:** Great for PvP or survival networks where you want everyone to see when players die.
+</ParamField>
+
+### Example Configuration
+
+```yaml
+customMessages:
+  broadcastDeathMessages: true
+```
+
+## Advancement Messages
+
+<ParamField path="customMessages.broadcastAdvancementMessages" type="boolean" default={true}>
+  When enabled, player advancement messages are broadcast to all servers in your network via Redis.
+  
+  **Use case:** Perfect for celebrating player achievements across your entire network.
+</ParamField>
+
+### Example Configuration
+
+```yaml
+customMessages:
+  broadcastAdvancementMessages: true
+```
+
+## Custom Name Format
+
+<ParamField path="customMessages.customName" type="string" default="<sender_displayname>">
+  The format used to replace player names in death and advancement messages. Supports all FairyChat placeholders.
+  
+  **Default:** `<sender_displayname>`
+  
+  This allows you to customize how player names appear in system messages.
+</ParamField>
+
+### Examples
+
+#### Using Display Name (Default)
+
+```yaml
+customMessages:
+  customName: "<sender_displayname>"
+```
+
+Result: `[Admin] Steve was slain by Zombie`
+
+#### Using Username Only
+
+```yaml
+customMessages:
+  customName: "<sender_name>"
+```
+
+Result: `Steve was slain by Zombie`
+
+#### With LuckPerms Prefix
+
+```yaml
+customMessages:
+  customName: "<fc_luckperms_prefix><sender_name>"
+```
+
+Result: `[VIP]Steve was slain by Zombie`
+
+#### Colored Name
+
+```yaml
+customMessages:
+  customName: "<fc_luckperms_username_color><sender_name></fc_luckperms_username_color>"
+```
+
+Result: Player name appears with their configured username color
+
+#### With Server Name
+
+```yaml
+customMessages:
+  customName: "[<server_name>] <sender_displayname>"
+```
+
+Result: `[Survival] Steve was slain by Zombie`
+
+## Complete Configuration Example
+
+Here's a complete example for a network setup:
+
+```yaml
+customMessages:
+  # Network-wide death messages
+  broadcastDeathMessages: true
+  
+  # Network-wide advancement messages
+  broadcastAdvancementMessages: true
+  
+  # Disabled to prevent issues with quick connect
+  broadcastJoinMessages: false
+  broadcastQuitMessages: false
+  
+  # Custom name format with prefix and color
+  customName: "<fc_luckperms_prefix><fc_luckperms_username_color><sender_name></fc_luckperms_username_color>"
+```
+
+## Single Server Example
+
+For single-server setups without Redis:
+
+```yaml
+customMessages:
+  broadcastDeathMessages: false
+  broadcastAdvancementMessages: false
+  broadcastJoinMessages: false
+  broadcastQuitMessages: false
+  customName: "<sender_displayname>"
+```
+
+<Info>
+When Redis is disabled, the broadcast settings have no effect. Messages will only be shown to players on the same server.
+</Info>
+
+## Redis Requirement
+
+For broadcasting messages across servers, Redis must be enabled in your configuration:
+
+```yaml
+redisCredentials:
+  enabled: true
+  uri: "redis://localhost:6379"
+```
+
+Without Redis:
+- All broadcast settings are ignored
+- Messages only appear on the server where they occur
+- Perfect for single-server setups
+
+## Use Cases
+
+### Small Community Network
+
+```yaml
+customMessages:
+  broadcastDeathMessages: true
+  broadcastAdvancementMessages: true
+  broadcastJoinMessages: true
+  broadcastQuitMessages: true
+  customName: "<sender_displayname>"
+```
+
+Best for tight-knit communities where players want to see all activity across servers.
+
+### Large Network
+
+```yaml
+customMessages:
+  broadcastDeathMessages: false
+  broadcastAdvancementMessages: false
+  broadcastJoinMessages: false
+  broadcastQuitMessages: false
+  customName: "<fc_luckperms_prefix><sender_name>"
+```
+
+Best for large networks to reduce message spam and prevent confusion.
+
+### PvP Network
+
+```yaml
+customMessages:
+  broadcastDeathMessages: true  # Show all kills
+  broadcastAdvancementMessages: false
+  broadcastJoinMessages: false
+  broadcastQuitMessages: false
+  customName: "<fc_luckperms_username_color><sender_name></fc_luckperms_username_color>"
+```
+
+Highlights PvP kills across the network while keeping other messages local.
+
+## Tips and Best Practices
+
+<Tip>
+**Test on a staging environment** - Test your broadcast settings on a test server before deploying to production to ensure messages appear as expected.
+</Tip>
+
+<Tip>
+**Consider your network size** - Larger networks should be more conservative with broadcast settings to prevent chat spam.
+</Tip>
+
+<Warning>
+**Velocity/BungeeCord users** - Be careful with `broadcastQuitMessages` due to the timing of quit events with quick connect. This can cause messages to appear out of order.
+</Warning>
+
+## Troubleshooting
+
+### Messages Not Broadcasting
+
+1. **Check Redis connection** - Ensure Redis is enabled and properly configured
+2. **Test Redis connection** - Verify Redis is accessible from all servers
+3. **Check broadcast settings** - Ensure the specific message type broadcast is enabled
+4. **Reload configuration** - Run `/fairychat reload` on all servers
+
+### Messages Appearing Out of Order
+
+- This typically happens with `broadcastQuitMessages` on networks with quick connect
+- **Solution:** Disable `broadcastQuitMessages` and handle quit messages at the proxy level
+
+### Custom Names Not Applying
+
+1. **Check placeholder syntax** - Ensure placeholders are correctly formatted
+2. **Verify PlaceholderAPI** - If using PAPI placeholders, ensure the plugin and expansions are installed
+3. **Test with simple format** - Try using just `<sender_name>` to rule out placeholder issues
+4. **Reload configuration** - Run `/fairychat reload`
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Placeholders" icon="brackets-curly" href="/configuration/placeholders">
+    Learn about available placeholders for custom names
+  </Card>
+  
+  <Card title="Database" icon="database" href="/configuration/database">
+    Configure database settings
+  </Card>
+</CardGroup>

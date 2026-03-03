@@ -1,0 +1,108 @@
+---
+title: FairyChat Admin Commands
+description: Plugin information and administrative commands
+---
+
+The `/fairychat` command provides plugin information and administrative functions for managing FairyChat.
+
+## Commands
+
+### Plugin Information
+
+```
+/fairychat
+```
+
+Displays information about the FairyChat plugin, including:
+- Plugin version
+- Author information
+- Links to documentation and support
+
+#### Permission
+
+No permission required - available to all players.
+
+### Reload Configuration
+
+```
+/fairychat reload
+```
+
+Reloads the plugin configuration from disk without requiring a server restart.
+
+#### Permission
+
+```
+fairychat.command.fairychat.reload
+```
+
+Only users with this permission can reload the plugin configuration.
+
+## Features
+
+### Hot Reload
+
+The reload command allows you to apply configuration changes without restarting your server:
+
+- Chat formats
+- Message templates
+- Feature settings
+- Redis configuration
+- Cooldown and similarity check settings
+
+### Interactive Plugin Info
+
+The plugin information message includes:
+- Clickable links to the GitHub repository
+- Hover tooltips with additional information
+- Current version number
+- Author credits with link to their profile
+
+## Examples
+
+### View Plugin Information
+
+```
+/fairychat
+```
+
+Displays: "This server is running FairyChat v1.x.x by rexlManu" with interactive elements.
+
+### Reload Configuration
+
+```
+/fairychat reload
+```
+
+Reloads all configuration files and displays a confirmation message.
+
+## When to Reload
+
+You should reload the plugin after making changes to:
+
+- `config.yml` - Main plugin configuration
+- Chat format settings
+- Message templates
+- Permission-related settings
+- Feature toggles
+
+## Configuration
+
+Customize the reload success message in your `config.yml`:
+
+```yaml
+messages:
+  plugin-reloaded: "<green>FairyChat configuration has been reloaded!"
+```
+
+## Notes
+
+- The reload command reloads configuration files only
+- Some changes may require a full server restart (e.g., dependency changes)
+- Players currently online will be affected by the new configuration immediately
+- Redis connections are re-established if configuration changes
+
+## Related
+
+- [Configuration](/configuration/overview) - Learn about configuration options
+- [Permissions](/permissions) - Complete permissions reference

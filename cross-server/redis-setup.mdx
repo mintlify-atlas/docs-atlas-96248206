@@ -1,0 +1,147 @@
+---
+title: Redis Setup
+description: Configure Redis for cross-server communication in FairyChat
+---
+
+FairyChat uses Redis to synchronize chat messages, broadcasts, and private messages across multiple servers in your network.
+
+## Prerequisites
+
+Before setting up Redis in FairyChat, you need:
+
+- A Redis server (version 5.0 or higher recommended)
+- Network access between your Minecraft servers and Redis server
+- Redis connection URL (see format below)
+
+## Configuration
+
+Redis settings are configured in your `config.yml` file under the `redis-credentials` section.
+
+### Enabling Redis
+
+<Steps>
+  <Step title="Locate the Redis configuration">
+    Open your `config.yml` file and find the `redis-credentials` section:
+
+    ```yaml
+    redis-credentials:
+      # Specifies whether Redis support should be enabled.
+      # When enabled, chat messages, broadcasts, and private messages will be handled over Redis.
+      enabled: false
+      url: "redis://localhost:6379"
+    ```
+  </Step>
+
+  <Step title="Configure the connection URL">
+    Update the `url` field with your Redis server connection string. See the format examples below.
+  </Step>
+
+  <Step title="Enable Redis support">
+    Set `enabled` to `true`:
+
+    ```yaml
+    redis-credentials:
+      enabled: true
+      url: "redis://your-redis-server:6379"
+    ```
+  </Step>
+
+  <Step title="Restart your server">
+    Restart your Minecraft server to apply the changes. Check your server console for the message:
+
+    ```
+    [FairyChat] Using redis for broadcasting messages.
+    ```
+  </Step>
+</Steps>
+
+## Connection String Format
+
+The Redis URL follows the standard Redis URI format:
+
+### Basic Connection
+
+```yaml
+url: "redis://localhost:6379"
+```
+
+### With Authentication
+
+```yaml
+url: "redis://:password@localhost:6379"
+```
+
+### With Username and Password
+
+```yaml
+url: "redis://username:password@localhost:6379"
+```
+
+### Using a Specific Database
+
+```yaml
+url: "redis://localhost:6379/0"
+```
+
+### SSL/TLS Connection
+
+```yaml
+url: "rediss://localhost:6380"
+```
+
+<Note>
+  The connection URL is passed directly to Jedis (Java Redis client). All standard Jedis connection formats are supported.
+</Note>
+
+## Verification
+
+After enabling Redis, verify the setup is working:
+
+1. **Check server logs** - Look for the Redis connection confirmation message
+2. **Test cross-server chat** - Send a message from one server and verify it appears on other servers
+3. **Test broadcasts** - Use `/broadcast` and confirm the message reaches all servers
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection refused error">
+    - Verify your Redis server is running
+    - Check the host and port in your connection URL
+    - Ensure firewall rules allow connections to Redis
+    - Test connectivity: `telnet your-redis-server 6379`
+  </Accordion>
+
+  <Accordion title="Authentication failed">
+    - Verify your password is correct
+    - Check if your Redis server requires a username
+    - Ensure no special characters in the URL are unencoded
+  </Accordion>
+
+  <Accordion title="Messages not syncing between servers">
+    - Confirm all servers are using the same Redis server
+    - Verify the same database number is used (or none specified)
+    - Check server logs for Redis reconnection warnings
+    - Ensure all servers have `enabled: true` in their config
+  </Accordion>
+
+  <Accordion title="Redis connection keeps dropping">
+    FairyChat automatically reconnects to Redis if the connection is lost. You'll see a warning message:
+    
+    ```
+    [FairyChat] Redis connection re-established fairychat:messaging.
+    ```
+    
+    If this happens frequently, check your Redis server stability and network connection.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Multi-Server Messaging" icon="comments" href="/cross-server/multi-server-messaging">
+    Learn how cross-server messaging works
+  </Card>
+  <Card title="Private Messages" icon="envelope" href="/features/private-messaging">
+    Configure cross-server private messaging
+  </Card>
+</CardGroup>

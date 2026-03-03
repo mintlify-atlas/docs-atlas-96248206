@@ -1,0 +1,209 @@
+---
+title: Permissions
+description: Complete reference of all FairyChat permissions
+---
+
+FairyChat uses a comprehensive permission system to control access to commands and features. This page lists all available permissions organized by category.
+
+## Command Permissions
+
+Permissions required to execute specific commands.
+
+### Broadcast
+
+```
+fairychat.command.broadcast
+```
+
+Allows the use of the `/broadcast` command to send messages to all players across servers.
+
+### Chat Clear
+
+```
+fairychat.command.chatclear
+```
+
+Allows the use of the `/clearchat` command to clear chat for all or specific players.
+
+### Reload
+
+```
+fairychat.command.fairychat.reload
+```
+
+Allows the use of the `/fairychat reload` command to reload plugin configuration.
+
+## Feature Permissions
+
+Permissions that enable or control specific features.
+
+### MiniMessage Formatting
+
+```
+fairychat.feature.minimessage
+```
+
+Allows players to use MiniMessage formatting and color codes in:
+- Chat messages
+- Broadcast messages
+- Private messages
+
+Without this permission, formatting codes will be displayed as plain text.
+
+### Display Item
+
+```
+fairychat.feature.displayitem
+```
+
+Allows players to show the item they're holding in chat using the `<item>` placeholder.
+
+Example: "Check out `<item>`!" displays the item tooltip when hovered.
+
+## Bypass Permissions
+
+Permissions that allow players to bypass certain restrictions and checks.
+
+### Bypass Ignore
+
+```
+fairychat.bypass.ignore
+```
+
+Allows sending messages to players who have ignored you. Useful for staff members who need to contact all players.
+
+Affects:
+- Private messages
+- Direct communication
+
+### Bypass Cooldown
+
+```
+fairychat.bypass.cooldown
+```
+
+Bypass the chat cooldown restriction. Players with this permission can send messages without waiting for the cooldown period.
+
+Useful for:
+- Staff members
+- VIP players
+- Important announcements
+
+### Bypass Similarity Check
+
+```
+fairychat.bypass.similarity
+```
+
+Bypass the similarity check for messages. This allows sending similar or identical messages in quick succession.
+
+The similarity check prevents spam by blocking messages that are too similar to recently sent messages.
+
+## Notification Permissions
+
+Permissions that control what notifications players receive.
+
+### Update Notifications
+
+```
+fairychat.notify-update
+```
+
+Receive notifications about available plugin updates when joining the server.
+
+Typically granted to:
+- Server administrators
+- Plugin managers
+
+## Message Control Permissions
+
+Permissions that control visibility of join/quit messages.
+
+### Ignore Join Message
+
+```
+fairychat.messages.join.ignore
+```
+
+The join message will not be sent for players with this permission.
+
+Use cases:
+- Staff members joining silently
+- Vanished players
+- Special roles that shouldn't announce joins
+
+### Ignore Quit Message
+
+```
+fairychat.messages.quit.ignore
+```
+
+The quit message will not be sent for players with this permission.
+
+Use cases:
+- Staff members leaving silently
+- Vanished players
+- Special roles that shouldn't announce departures
+
+## Permission Groups Example
+
+Here's an example of how you might organize permissions for different user groups:
+
+### Default Players
+
+```yaml
+# No special permissions required
+# Can use: /pm, /r, /ignore, /fairychat
+```
+
+### VIP Players
+
+```yaml
+permissions:
+  - fairychat.feature.minimessage
+  - fairychat.feature.displayitem
+  - fairychat.bypass.cooldown
+```
+
+### Moderators
+
+```yaml
+permissions:
+  - fairychat.command.chatclear
+  - fairychat.bypass.ignore
+  - fairychat.bypass.cooldown
+  - fairychat.bypass.similarity
+  - fairychat.feature.minimessage
+  - fairychat.feature.displayitem
+```
+
+### Administrators
+
+```yaml
+permissions:
+  - fairychat.command.broadcast
+  - fairychat.command.chatclear
+  - fairychat.command.fairychat.reload
+  - fairychat.bypass.ignore
+  - fairychat.bypass.cooldown
+  - fairychat.bypass.similarity
+  - fairychat.feature.minimessage
+  - fairychat.feature.displayitem
+  - fairychat.notify-update
+  - fairychat.messages.join.ignore
+  - fairychat.messages.quit.ignore
+```
+
+## Permission Management
+
+FairyChat permissions can be managed through any standard permission plugin:
+
+- **LuckPerms** (Recommended)
+- **PermissionsEx**
+- **GroupManager**
+- Any other Bukkit-compatible permission plugin
+
+## Related Pages
+
+- [Commands Overview](/commands/overview) - Complete command reference
+- [Configuration](/configuration/overview) - Configure FairyChat features

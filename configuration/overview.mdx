@@ -1,0 +1,139 @@
+---
+title: Configuration Overview
+description: Learn about FairyChat's configuration file structure and main settings
+---
+
+FairyChat uses a YAML configuration file to customize the plugin's behavior. The configuration file is automatically generated when you first start the plugin.
+
+## Configuration File Location
+
+The main configuration file is located at:
+```
+plugins/FairyChat/config.yml
+```
+
+## Reloading Configuration
+
+You can reload the configuration without restarting the server using:
+
+```
+/fairychat reload
+```
+
+<Warning>
+Reloading the configuration will apply changes immediately, but some features like database connections may require a full restart.
+</Warning>
+
+## Main Settings
+
+### Update Checker
+
+<ParamField path="checkForUpdates" type="boolean" default={true}>
+  Controls whether the plugin should check for updates on startup.
+</ParamField>
+
+### Server Name
+
+<ParamField path="serverName" type="string" default="">
+  The server name displayed in the `<server_name>` placeholder. Useful for multi-server networks.
+</ParamField>
+
+### Chat Format
+
+<ParamField path="chatFormat" type="string" default="<#5E548E><sender_displayname></#5E548E> <dark_gray>»</dark_gray> <gray><message></gray>">
+  The default format for chat messages using MiniMessage format. You can use built-in placeholders, PlaceholderAPI placeholders, and MiniPlaceholders.
+  
+  **Built-in placeholders:**
+  - `<sender_name>` - The name of the player who sent the message
+  - `<sender_displayname>` - The display name of the player who sent the message
+  - `<message>` - The message that was sent
+  - `<server_name>` - The server name configured in config.yml
+</ParamField>
+
+### Console Display
+
+<ParamField path="displayChatInConsole" type="boolean" default={true}>
+  Controls whether player chat messages sent via Redis should be displayed in the console.
+</ParamField>
+
+### Legacy Color Support
+
+<ParamField path="legacyColorSupport" type="boolean" default={false}>
+  Enable this if you have other plugins that use legacy chat colors (e.g., `&c`, `&l`). This ensures compatibility with plugins that haven't migrated to MiniMessage.
+</ParamField>
+
+### Placeholder Self-Closing Tags
+
+<ParamField path="placeholderSelfClosingTags" type="boolean" default={true}>
+  When enabled, internal placeholders use self-closing tags, preventing styling from being applied to child text components.
+</ParamField>
+
+## Advanced Features
+
+FairyChat includes several advanced features that can be configured:
+
+- **Group Formats** - Define different chat formats based on player groups
+- **Custom Messages** - Configure join/quit messages and other custom messages
+- **Database** - Set up MySQL or SQLite for data persistence
+- **Placeholders** - Use PlaceholderAPI, MiniPlaceholders, and built-in placeholders
+- **Redis** - Enable cross-server communication
+- **Private Messaging** - Configure private message system
+- **Mentions** - Set up player mention notifications
+- **Cooldowns** - Prevent chat spam with configurable cooldowns
+- **Anti-Spam** - Detect and prevent similar messages
+
+## Redis Configuration
+
+<ParamField path="redisCredentials" type="object">
+  Redis credentials for communicating between servers in a network.
+  
+  <Expandable title="properties">
+    <ParamField path="enabled" type="boolean" default={false}>
+      Enable Redis for cross-server communication
+    </ParamField>
+    
+    <ParamField path="uri" type="string" default="redis://localhost:6379">
+      Redis connection URI
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Spoiler Tags
+
+<ParamField path="spoilerTagsEnabled" type="boolean" default={true}>
+  Allow players to use spoiler tags in chat messages. Example: `||hidden message||`
+</ParamField>
+
+## World Name Customization
+
+<ParamField path="worldNames" type="map">
+  Customize the output of the `<fc_world_name>` placeholder for different worlds.
+  
+  **Default values:**
+  ```yaml
+  worldNames:
+    world: "<gradient:dark_green:green>Overworld</gradient:dark_green:green>"
+    world_nether: "<gradient:dark_red:red>Nether</gradient:dark_red:red>"
+    world_the_end: "<gradient:dark_purple:light_purple>End</gradient:dark_purple:light_purple>"
+  ```
+</ParamField>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Placeholders" icon="brackets-curly" href="/configuration/placeholders">
+    Learn about available placeholders
+  </Card>
+  
+  <Card title="Group Formats" icon="users" href="/configuration/group-formats">
+    Configure per-group chat formats
+  </Card>
+  
+  <Card title="Custom Messages" icon="message" href="/configuration/custom-messages">
+    Set up join/quit messages
+  </Card>
+  
+  <Card title="Database" icon="database" href="/configuration/database">
+    Configure database settings
+  </Card>
+</CardGroup>

@@ -1,0 +1,93 @@
+---
+title: Chat Clear Command
+description: Clear the chat for all players or specific players
+---
+
+The `/clearchat` command allows administrators to clear the chat, either for all players or for a specific player.
+
+## Usage
+
+```
+/clearchat [player]
+```
+
+### Arguments
+
+- `[player]` - Optional. The specific player to clear chat for. If omitted, clears chat for all players.
+
+### Aliases
+
+```
+/cc
+```
+
+## Permission
+
+```
+fairychat.command.chatclear
+```
+
+Only users with this permission can execute the chat clear command.
+
+## Features
+
+### Clear All Players' Chat
+
+When executed without arguments, the command clears the chat for all online players.
+
+```
+/clearchat
+```
+
+or
+
+```
+/cc
+```
+
+### Clear Specific Player's Chat
+
+Target a specific player to clear only their chat:
+
+```
+/clearchat PlayerName
+```
+
+or
+
+```
+/cc PlayerName
+```
+
+### Multi-Server Support
+
+When Redis is configured, the chat clear command can clear chat across all connected servers simultaneously.
+
+## Examples
+
+### Clear Everyone's Chat
+
+```
+/clearchat
+```
+
+Clears the chat for all players on the server (or all servers if Redis is enabled).
+
+### Clear Specific Player's Chat
+
+```
+/clearchat Steve
+```
+
+Clears the chat only for the player named Steve.
+
+## Use Cases
+
+- Remove spam from chat
+- Clear chat after an event or announcement
+- Reset a specific player's chat view
+- Prepare for important announcements
+
+## Related Commands
+
+- [Broadcast](/commands/broadcast) - Send messages to all players after clearing chat

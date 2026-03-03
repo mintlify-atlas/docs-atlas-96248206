@@ -1,0 +1,204 @@
+---
+title: Broadcast
+description: Send messages to all players across your server network
+icon: 'bullhorn'
+---
+
+The broadcast feature allows administrators to send formatted messages to all players on the server, or across all servers in a multi-server network.
+
+## Command
+
+```bash
+/broadcast <message>
+```
+
+Sends a broadcast message to all online players.
+
+<Card title="Alias" icon="terminal">
+  You can also use `/bc` as a shorthand for `/broadcast`
+</Card>
+
+## Permission
+
+<ParamField path="fairychat.command.broadcast" type="permission" required>
+  Required to use the `/broadcast` command
+</ParamField>
+
+## Configuration
+
+Configure the broadcast message format in your `config.yml`:
+
+```yaml
+broadcast:
+  format: "<dark_gray>[<gradient:#BE95C4:#9F86C0:#5E548E>Broadcast</gradient>]</dark_gray> <gray><message></gray>"
+```
+
+### Available Placeholders
+
+<ParamField path="message" type="string">
+  The broadcast message content
+</ParamField>
+
+You can also use any MiniPlaceholders or PlaceholderAPI placeholders in the format.
+
+## Features
+
+<AccordionGroup>
+  <Accordion title="Cross-Server Broadcasting" icon="server">
+    When Redis is enabled, broadcast messages are automatically sent to all servers in your network. No additional configuration needed!
+    
+    ```yaml
+    redisCredentials:
+      enabled: true
+      uri: "redis://localhost:6379"
+    ```
+  </Accordion>
+  
+  <Accordion title="MiniMessage Support" icon="paintbrush">
+    Staff with the `fairychat.feature.minimessage` permission can use MiniMessage formatting in broadcast messages:
+    
+    ```
+    /broadcast <gradient:red:gold>Important Server Event!</gradient>
+    ```
+  </Accordion>
+  
+  <Accordion title="Rich Text Formatting" icon="text">
+    Add hover text, click events, and more using MiniMessage syntax:
+    
+    ```
+    /broadcast <hover:show_text:'Click to visit!'><click:open_url:'https://example.com'>Click here!</click></hover>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Customization Examples
+
+<CodeGroup>
+```yaml Default Format
+broadcast:
+  format: "<dark_gray>[<gradient:#BE95C4:#9F86C0:#5E548E>Broadcast</gradient>]</dark_gray> <gray><message></gray>"
+```
+
+```yaml Alert Style
+broadcast:
+  format: "<bold><red>⚠ ALERT</red></bold> <white><message></white>"
+```
+
+```yaml Announcement Style
+broadcast:
+  format: "<gold>━━━━━━━━━━━━━━━━━━━━━━</gold>\n<yellow><bold>📢 Announcement</bold></yellow>\n<white><message></white>\n<gold>━━━━━━━━━━━━━━━━━━━━━━</gold>"
+```
+
+```yaml Minimal Style
+broadcast:
+  format: "<dark_gray>[!</dark_gray><gray>]</gray> <white><message></white>"
+```
+
+```yaml Server Prefix
+broadcast:
+  format: "<gradient:blue:cyan>[<server_name>]</gradient> <white><message></white>"
+```
+</CodeGroup>
+
+## Usage Examples
+
+<Steps>
+  <Step title="Simple Broadcast">
+    ```bash
+    /broadcast Server restart in 5 minutes!
+    ```
+    
+    Sends a plain text message to all players.
+  </Step>
+  
+  <Step title="Formatted Broadcast">
+    ```bash
+    /broadcast <gradient:red:gold>Double XP Event starting now!</gradient>
+    ```
+    
+    Requires `fairychat.feature.minimessage` permission.
+  </Step>
+  
+  <Step title="Interactive Broadcast">
+    ```bash
+    /broadcast <click:open_url:'https://discord.gg/example'><hover:show_text:'Click to join!'>Join our Discord!</hover></click>
+    ```
+    
+    Creates a clickable link with hover text.
+  </Step>
+  
+  <Step title="Multi-line Broadcast">
+    ```bash
+    /broadcast <gold>═════════════</gold>\n<yellow>Event Alert!</yellow>\n<white>PvP Tournament in 10 minutes</white>\n<gold>═════════════</gold>
+    ```
+    
+    Uses `\n` for line breaks (requires MiniMessage permission).
+  </Step>
+</Steps>
+
+## Multi-Server Setup
+
+To broadcast messages across multiple servers:
+
+1. **Enable Redis** in your `config.yml` on all servers:
+   ```yaml
+   redisCredentials:
+     enabled: true
+     uri: "redis://localhost:6379"
+   ```
+
+2. **Configure server names** (optional but recommended):
+   ```yaml
+   serverName: "Survival"
+   ```
+   ```yaml
+   serverName: "Creative"
+   ```
+
+3. **Use broadcasts normally** - they'll automatically reach all connected servers!
+
+<Info>
+  When broadcasting across servers, the message originates from the server where the command was executed. You can include `<server_name>` in the format to show which server sent the broadcast.
+</Info>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Keep it concise" icon="compress">
+    Broadcasts interrupt gameplay, so keep messages short and important.
+  </Card>
+  <Card title="Use sparingly" icon="clock">
+    Frequent broadcasts can be annoying. Use them for truly important announcements.
+  </Card>
+  <Card title="Format for visibility" icon="eye">
+    Use colors and formatting that stand out from normal chat.
+  </Card>
+  <Card title="Test formats first" icon="vial">
+    Test your broadcast format on a test server before using it in production.
+  </Card>
+</CardGroup>
+
+## Advanced Formatting
+
+### Using Decorations
+
+```yaml
+broadcast:
+  format: "<strikethrough><dark_gray>                    </dark_gray></strikethrough>\n<gold><bold>📢 <message></bold></gold>\n<strikethrough><dark_gray>                    </dark_gray></strikethrough>"
+```
+
+### With Timestamps
+
+If using MiniPlaceholders with time support:
+
+```yaml
+broadcast:
+  format: "<dark_gray>[<gradient:#BE95C4:#5E548E>Broadcast</gradient> - <time>]</dark_gray> <message>"
+```
+
+### Rainbow Broadcasts
+
+```yaml
+broadcast:
+  format: "<rainbow>[Broadcast]</rainbow> <white><message></white>"
+```

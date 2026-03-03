@@ -1,0 +1,347 @@
+---
+title: Chat Cooldowns
+description: Prevent spam with configurable chat cooldown strategies
+icon: 'timer'
+---
+
+FairyChat provides flexible chat cooldown mechanisms to prevent spam and maintain chat quality. Choose from multiple strategies to fit your server's needs.
+
+## Cooldown Strategies
+
+FairyChat offers three cooldown strategies, each designed for different use cases:
+
+<CardGroup cols={3}>
+  <Card title="DISABLED" icon="ban">
+    No cooldown restrictions. Players can chat freely.
+  </Card>
+  <Card title="MESSAGE_LENGTH" icon="ruler">
+    Cooldown based on message length. Longer messages = longer cooldowns.
+  </Card>
+  <Card title="MESSAGE_THRESHOLD" icon="hashtag">
+    Cooldown after sending a certain number of messages.
+  </Card>
+</CardGroup>
+
+## Configuration
+
+Configure cooldowns in your `config.yml`:
+
+```yaml
+# Define which strategy to use when limiting players from chatting too fast.
+# Supported strategies:
+# DISABLED - Disable the cooldown
+# MESSAGE_LENGTH - Cooldown based on the length of the message
+# MESSAGE_THRESHOLD - Cooldown based on the amount of messages sent
+cooldownStrategy: DISABLED
+
+# The cooldown, in seconds, that a player has to wait before chatting again.
+messageThresholdCooldown: 0
+
+# The threshold, how many messages a player can send before the cooldown is applied.
+messageThresholdAmount: 0
+
+# The multiplier for how long the cooldown should be based on the length of the message.
+# Example: 0.02 * 100 = 2 seconds cooldown for a 100 character message.
+messageLengthMultiplier: 0.02
+```
+
+## Strategy Details
+
+### DISABLED Strategy
+
+No cooldown restrictions. Best for small, trusted communities.
+
+```yaml
+cooldownStrategy: DISABLED
+```
+
+<Info>
+  When disabled, players can send messages as fast as they can type. Other anti-spam measures (like similarity checking) may still be active.
+</Info>
+
+### MESSAGE_LENGTH Strategy
+
+Cooldown duration is calculated based on the length of the message sent.
+
+```yaml
+cooldownStrategy: MESSAGE_LENGTH
+messageLengthMultiplier: 0.02
+```
+
+<ParamField path="messageLengthMultiplier" type="double" required>
+  Multiplier for calculating cooldown based on message length.
+  
+  **Formula:** `cooldown (seconds) = message length × multiplier`
+  
+  **Default:** `0.02`
+</ParamField>
+
+#### Examples
+
+<CodeGroup>
+```yaml Lenient (Default)
+messageLengthMultiplier: 0.02
+# 10 chars = 0.2 seconds
+# 50 chars = 1 second
+# 100 chars = 2 seconds
+```
+
+```yaml Moderate
+messageLengthMultiplier: 0.05
+# 10 chars = 0.5 seconds
+# 50 chars = 2.5 seconds
+# 100 chars = 5 seconds
+```
+
+```yaml Strict
+messageLengthMultiplier: 0.1
+# 10 chars = 1 second
+# 50 chars = 5 seconds
+# 100 chars = 10 seconds
+```
+</CodeGroup>
+
+<Tip>
+  **MESSAGE_LENGTH** is ideal for:
+  - Preventing spam while allowing normal conversation
+  - Automatically adjusting to message complexity
+  - Encouraging thoughtful, longer messages
+</Tip>
+
+### MESSAGE_THRESHOLD Strategy
+
+Allows a certain number of messages before applying a cooldown period.
+
+```yaml
+cooldownStrategy: MESSAGE_THRESHOLD
+messageThresholdAmount: 3
+messageThresholdCooldown: 5
+```
+
+<ParamField path="messageThresholdAmount" type="int" required>
+  Number of messages a player can send before cooldown is triggered.
+  
+  **Default:** `0`
+</ParamField>
+
+<ParamField path="messageThresholdCooldown" type="int" required>
+  Cooldown duration in seconds after threshold is reached.
+  
+  **Default:** `0`
+</ParamField>
+
+#### Examples
+
+<CodeGroup>
+```yaml Lenient
+messageThresholdAmount: 5
+messageThresholdCooldown: 3
+# Allow 5 messages, then 3 second cooldown
+```
+
+```yaml Moderate (Recommended)
+messageThresholdAmount: 3
+messageThresholdCooldown: 5
+# Allow 3 messages, then 5 second cooldown
+```
+
+```yaml Strict
+messageThresholdAmount: 2
+messageThresholdCooldown: 10
+# Allow 2 messages, then 10 second cooldown
+```
+</CodeGroup>
+
+<Tip>
+  **MESSAGE_THRESHOLD** is ideal for:
+  - Large public servers with spam concerns
+  - Preventing rapid-fire message spam
+  - Allowing burst conversations followed by cooldown
+</Tip>
+
+## Bypass Permission
+
+<ParamField path="fairychat.bypass.cooldown" type="permission">
+  Players with this permission can bypass all cooldown restrictions.
+</ParamField>
+
+Grant this permission to:
+- Staff members
+- VIP/Donor ranks (as a perk)
+- Trusted players
+
+```yaml
+permissions:
+  - fairychat.bypass.cooldown
+```
+
+## Recommended Configurations
+
+<Tabs>
+  <Tab title="Small Community">
+    ```yaml
+    # For small, trusted communities
+    cooldownStrategy: DISABLED
+    ```
+    
+    No restrictions needed when you trust your players.
+  </Tab>
+  
+  <Tab title="Medium Server">
+    ```yaml
+    # For medium-sized servers
+    cooldownStrategy: MESSAGE_LENGTH
+    messageLengthMultiplier: 0.03
+    ```
+    
+    Gentle cooldowns that scale with message length.
+  </Tab>
+  
+  <Tab title="Large Public Server">
+    ```yaml
+    # For large public servers with spam concerns
+    cooldownStrategy: MESSAGE_THRESHOLD
+    messageThresholdAmount: 3
+    messageThresholdCooldown: 5
+    ```
+    
+    Prevent rapid-fire spam while allowing normal conversation.
+  </Tab>
+  
+  <Tab title="Hardcore Anti-Spam">
+    ```yaml
+    # For servers with severe spam problems
+    cooldownStrategy: MESSAGE_THRESHOLD
+    messageThresholdAmount: 2
+    messageThresholdCooldown: 8
+    
+    # Also enable similarity checking
+    preventSimilarMessages: true
+    similarityPercentage: 0.75
+    ```
+    
+    Combine threshold cooldown with similarity checking for maximum protection.
+  </Tab>
+</Tabs>
+
+## How Cooldowns Work
+
+<Steps>
+  <Step title="Message Sent">
+    Player sends a chat message.
+  </Step>
+  
+  <Step title="Cooldown Calculated">
+    Based on your strategy:
+    - **MESSAGE_LENGTH:** Calculates based on message length
+    - **MESSAGE_THRESHOLD:** Checks if threshold is exceeded
+  </Step>
+  
+  <Step title="Cooldown Applied">
+    If cooldown conditions are met, player must wait before sending another message.
+  </Step>
+  
+  <Step title="Cooldown Expires">
+    After the cooldown period, player can chat again normally.
+  </Step>
+</Steps>
+
+## Combining with Similarity Check
+
+For comprehensive anti-spam protection, combine cooldowns with the [similarity check](/features/similarity-check):
+
+```yaml
+# Cooldown Configuration
+cooldownStrategy: MESSAGE_THRESHOLD
+messageThresholdAmount: 3
+messageThresholdCooldown: 5
+
+# Similarity Check
+preventSimilarMessages: true
+similarityPercentage: 0.75
+similarityAlgorithm: LEVENSHTEIN
+```
+
+This combination prevents both:
+- Rapid message spam (cooldowns)
+- Repeated message spam (similarity check)
+
+<CardGroup cols={2}>
+  <Card title="Cooldowns" icon="timer">
+    Prevents rapid-fire messaging by time restrictions
+  </Card>
+  <Card title="Similarity Check" icon="copy">
+    Prevents sending the same or similar messages repeatedly
+  </Card>
+</CardGroup>
+
+## Player Feedback
+
+When a player is on cooldown, FairyChat automatically sends a message informing them how long they must wait. Customize this message in your configuration file.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Cooldown too strict" icon="hourglass">
+    **Adjust the values:**
+    
+    For MESSAGE_LENGTH:
+    ```yaml
+    messageLengthMultiplier: 0.01  # Reduce multiplier
+    ```
+    
+    For MESSAGE_THRESHOLD:
+    ```yaml
+    messageThresholdAmount: 5  # Increase allowed messages
+    messageThresholdCooldown: 3  # Reduce cooldown time
+    ```
+  </Accordion>
+  
+  <Accordion title="Cooldown not working" icon="circle-xmark">
+    **Check configuration:**
+    
+    1. Ensure cooldown is not DISABLED
+    2. Verify players don't have bypass permission
+    3. Check for config typos
+    4. Reload configuration: `/fairychat reload`
+  </Accordion>
+  
+  <Accordion title="Staff affected by cooldown" icon="user-tie">
+    **Grant bypass permission:**
+    
+    ```yaml
+    permissions:
+      - fairychat.bypass.cooldown
+    ```
+    
+    Add this to your staff permission groups.
+  </Accordion>
+</AccordionGroup>
+
+## Performance Notes
+
+<Info>
+  Cooldown tracking is stored in memory and is very efficient. Even with thousands of players, cooldowns have negligible performance impact.
+</Info>
+
+## Best Practices
+
+<Check>
+  **Start lenient** - Begin with lenient settings and tighten if needed
+</Check>
+
+<Check>
+  **Grant bypasses** - Give cooldown bypass to staff and trusted ranks
+</Check>
+
+<Check>
+  **Monitor feedback** - Listen to player feedback about cooldown strictness
+</Check>
+
+<Check>
+  **Use MESSAGE_LENGTH** - For most servers, MESSAGE_LENGTH provides the best balance
+</Check>
+
+<Check>
+  **Combine strategies** - Use cooldowns with similarity checking for best results
+</Check>

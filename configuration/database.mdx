@@ -1,0 +1,364 @@
+---
+title: Database Configuration
+description: Configure MySQL or SQLite for FairyChat data persistence
+---
+
+FairyChat supports two database types for storing persistent data such as player ignore lists: **SQLite** (default) and **MySQL**.
+
+## Database Types
+
+### SQLite (Default)
+
+SQLite is a lightweight, file-based database that requires no additional setup. It's perfect for:
+- Single-server setups
+- Small to medium-sized servers
+- Simple deployment without external dependencies
+
+**Benefits:**
+- No configuration required
+- No external database server needed
+- Automatic backups by copying the database file
+
+**Limitations:**
+- Not suitable for multi-server networks
+- Limited concurrent write performance
+
+### MySQL
+
+MySQL is a full-featured relational database server suitable for:
+- Multi-server networks
+- Large servers with high player counts
+- Setups requiring shared data across multiple servers
+
+**Benefits:**
+- Shared data across network
+- Better concurrent write performance
+- Professional database management tools
+- Scheduled backups and replication
+
+**Limitations:**
+- Requires separate MySQL server
+- Additional configuration required
+
+## Configuration
+
+Database settings are configured in the `database` section of your `config.yml`:
+
+### SQLite Configuration (Default)
+
+```yaml
+database:
+  mysql: false
+  url: "jdbc:mysql://localhost:3306/fairychat?autoReconnect=true&useSSL=false"
+  username: "root"
+  password: ""
+  playerIgnoreTable: "player_ignores"
+```
+
+When `mysql` is set to `false`, FairyChat uses SQLite. The MySQL connection details are ignored.
+
+### MySQL Configuration
+
+```yaml
+database:
+  mysql: true
+  url: "jdbc:mysql://localhost:3306/fairychat?autoReconnect=true&useSSL=false"
+  username: "fairychat"
+  password: "your_secure_password"
+  playerIgnoreTable: "player_ignores"
+```
+
+## Configuration Options
+
+<ParamField path="database.mysql" type="boolean" default={false}>
+  Enable MySQL database. When `false`, SQLite is used instead.
+  
+  **SQLite location:** `plugins/FairyChat/database.db`
+</ParamField>
+
+<ParamField path="database.url" type="string" default="jdbc:mysql://localhost:3306/fairychat?autoReconnect=true&useSSL=false">
+  The JDBC connection URL for MySQL. Only required when `mysql` is enabled.
+  
+  **Format:** `jdbc:mysql://<host>:<port>/<database>?<parameters>`
+  
+  **Common parameters:**
+  - `autoReconnect=true` - Automatically reconnect if connection is lost
+  - `useSSL=false` - Disable SSL (enable for production with `useSSL=true`)
+  - `useUnicode=yes&characterEncoding=UTF-8` - UTF-8 support for special characters
+</ParamField>
+
+<ParamField path="database.username" type="string" default="root">
+  MySQL database username. Only required when `mysql` is enabled.
+  
+  <Warning>
+  Do not use the `root` user in production. Create a dedicated user with limited permissions.
+  </Warning>
+</ParamField>
+
+<ParamField path="database.password" type="string" default="">
+  MySQL database password. Only required when `mysql` is enabled.
+  
+  <Warning>
+  Keep your password secure. Use a strong password and restrict file permissions on `config.yml`.
+  </Warning>
+</ParamField>
+
+<ParamField path="database.playerIgnoreTable" type="string" default="player_ignores">
+  The name of the table used to store player ignore lists.
+  
+  **Default:** `player_ignores`
+  
+  Change this if you have table name conflicts or specific naming requirements.
+</ParamField>
+
+## Setting Up MySQL
+
+### Step 1: Create Database
+
+Connect to your MySQL server and create a database:
+
+```sql
+CREATE DATABASE fairychat CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### Step 2: Create User
+
+Create a dedicated user for FairyChat:
+
+```sql
+CREATE USER 'fairychat'@'localhost' IDENTIFIED BY 'your_secure_password';
+```
+
+For remote servers (network setup):
+
+```sql
+CREATE USER 'fairychat'@'%' IDENTIFIED BY 'your_secure_password';
+```
+
+### Step 3: Grant Permissions
+
+Grant the necessary permissions:
+
+```sql
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX ON fairychat.* TO 'fairychat'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+For remote servers:
+
+```sql
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX ON fairychat.* TO 'fairychat'@'%';
+FLUSH PRIVILEGES;
+```
+
+### Step 4: Configure FairyChat
+
+Update your `config.yml`:
+
+```yaml
+database:
+  mysql: true
+  url: "jdbc:mysql://localhost:3306/fairychat?autoReconnect=true&useSSL=false"
+  username: "fairychat"
+  password: "your_secure_password"
+  playerIgnoreTable: "player_ignores"
+```
+
+### Step 5: Restart Server
+
+Restart your server to apply the changes:
+
+```
+/stop
+```
+
+<Warning>
+Database changes require a full server restart. `/fairychat reload` will not apply database configuration changes.
+</Warning>
+
+## Connection URL Examples
+
+### Local MySQL Server
+
+```yaml
+url: "jdbc:mysql://localhost:3306/fairychat?autoReconnect=true&useSSL=false"
+```
+
+### Remote MySQL Server
+
+```yaml
+url: "jdbc:mysql://192.168.1.100:3306/fairychat?autoReconnect=true&useSSL=false"
+```
+
+### MySQL with SSL
+
+```yaml
+url: "jdbc:mysql://mysql.example.com:3306/fairychat?autoReconnect=true&useSSL=true&requireSSL=true"
+```
+
+### MySQL with UTF-8 Support
+
+```yaml
+url: "jdbc:mysql://localhost:3306/fairychat?autoReconnect=true&useSSL=false&useUnicode=yes&characterEncoding=UTF-8"
+```
+
+### Custom Port
+
+```yaml
+url: "jdbc:mysql://localhost:3307/fairychat?autoReconnect=true&useSSL=false"
+```
+
+## Network Setup
+
+For multi-server networks, all servers should connect to the same MySQL database:
+
+### Server 1 Configuration
+
+```yaml
+database:
+  mysql: true
+  url: "jdbc:mysql://mysql.example.com:3306/fairychat?autoReconnect=true&useSSL=true"
+  username: "fairychat"
+  password: "your_secure_password"
+  playerIgnoreTable: "player_ignores"
+```
+
+### Server 2 Configuration
+
+```yaml
+database:
+  mysql: true
+  url: "jdbc:mysql://mysql.example.com:3306/fairychat?autoReconnect=true&useSSL=true"
+  username: "fairychat"
+  password: "your_secure_password"
+  playerIgnoreTable: "player_ignores"
+```
+
+<Info>
+All servers in your network should use the same database configuration to ensure player data (like ignore lists) is synchronized.
+</Info>
+
+## Migration from SQLite to MySQL
+
+<Warning>
+Currently, there is no built-in migration tool. If you need to migrate data from SQLite to MySQL, you'll need to manually export and import the data.
+</Warning>
+
+### Manual Migration Steps
+
+1. **Backup SQLite database**
+   ```bash
+   cp plugins/FairyChat/database.db plugins/FairyChat/database.db.backup
+   ```
+
+2. **Set up MySQL** following the steps above
+
+3. **Export SQLite data** using a database tool like [DB Browser for SQLite](https://sqlitebrowser.org/)
+
+4. **Import into MySQL** using tools like phpMyAdmin or MySQL Workbench
+
+5. **Update config.yml** to use MySQL
+
+6. **Restart server** and verify data
+
+## Troubleshooting
+
+### Cannot Connect to MySQL
+
+**Possible causes:**
+- Incorrect host, port, or database name
+- MySQL server is not running
+- Firewall blocking connection
+- Invalid username or password
+
+**Solutions:**
+1. Verify MySQL server is running: `systemctl status mysql` (Linux)
+2. Test connection: `mysql -h localhost -u fairychat -p`
+3. Check firewall rules: `sudo ufw status` (Linux)
+4. Verify user permissions: `SHOW GRANTS FOR 'fairychat'@'localhost';`
+5. Check server logs in `plugins/FairyChat/logs/` or console output
+
+### Connection Timeout
+
+**Error:** `Communications link failure`
+
+**Solutions:**
+- Check if MySQL is accessible from the Minecraft server
+- Verify firewall rules allow connections on port 3306
+- For remote MySQL, ensure the user is created with appropriate host (`'%'` for any host)
+- Check network connectivity: `telnet mysql.example.com 3306`
+
+### SSL Connection Issues
+
+**Error:** `SSL connection error`
+
+**Solutions:**
+- Set `useSSL=false` for testing: `jdbc:mysql://localhost:3306/fairychat?useSSL=false`
+- For production, configure SSL properly on your MySQL server
+- Import MySQL SSL certificates if required
+
+### Character Encoding Issues
+
+**Issue:** Special characters not displaying correctly
+
+**Solution:** Add UTF-8 parameters to the connection URL:
+```yaml
+url: "jdbc:mysql://localhost:3306/fairychat?autoReconnect=true&useSSL=false&useUnicode=yes&characterEncoding=UTF-8"
+```
+
+And ensure your database uses UTF-8:
+```sql
+ALTER DATABASE fairychat CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### Table Not Found
+
+**Error:** `Table 'fairychat.player_ignores' doesn't exist`
+
+**Cause:** FairyChat failed to create tables automatically
+
+**Solution:**
+1. Verify the user has `CREATE` and `ALTER` permissions
+2. Restart the server to trigger table creation
+3. Check server logs for detailed error messages
+
+## Best Practices
+
+<Tip>
+**Use MySQL for networks** - If you run multiple servers, always use MySQL to share data across servers.
+</Tip>
+
+<Tip>
+**Regular backups** - Schedule regular database backups, especially before major updates.
+
+**SQLite:** `cp plugins/FairyChat/database.db backups/database-$(date +%Y%m%d).db`
+
+**MySQL:** `mysqldump -u fairychat -p fairychat > backup-$(date +%Y%m%d).sql`
+</Tip>
+
+<Tip>
+**Secure your password** - Use a strong password and restrict file permissions:
+```bash
+chmod 600 plugins/FairyChat/config.yml
+```
+</Tip>
+
+<Warning>
+**Production SSL** - Always use SSL (`useSSL=true`) for production databases, especially for remote connections.
+</Warning>
+
+<Tip>
+**Monitor performance** - Monitor database query performance and connection pool usage in high-traffic scenarios.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration Overview" icon="gear" href="/configuration/overview">
+    Return to main configuration
+  </Card>
+  
+  <Card title="Custom Messages" icon="message" href="/configuration/custom-messages">
+    Configure join/quit messages
+  </Card>
+</CardGroup>

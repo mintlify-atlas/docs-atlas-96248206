@@ -1,0 +1,98 @@
+{
+  "projectType": "general",
+  "projectName": "FairyChat",
+  "projectDescription": "A next-generation chat management plugin for Minecraft Paper servers with cross-server support",
+  "theme": "aspen",
+  "primaryColor": "#5E548E",
+  "lightColor": "#BE95C4",
+  "darkColor": "#4A3F7A",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "installation",
+          "quickstart"
+        ]
+      },
+      {
+        "group": "Features",
+        "pages": [
+          "features/chat-formatting",
+          "features/private-messaging",
+          "features/mentions",
+          "features/broadcast",
+          "features/chat-clear",
+          "features/ignore-system",
+          "features/cooldowns",
+          "features/similarity-check"
+        ]
+      },
+      {
+        "group": "Configuration",
+        "pages": [
+          "configuration/overview",
+          "configuration/placeholders",
+          "configuration/group-formats",
+          "configuration/custom-messages",
+          "configuration/database"
+        ]
+      },
+      {
+        "group": "Cross-Server",
+        "pages": [
+          "cross-server/redis-setup",
+          "cross-server/multi-server-messaging"
+        ]
+      },
+      {
+        "group": "Commands & Permissions",
+        "pages": [
+          "commands/overview",
+          "commands/broadcast",
+          "commands/private-messaging",
+          "commands/chat-clear",
+          "commands/ignore",
+          "commands/admin",
+          "permissions"
+        ]
+      },
+      {
+        "group": "Integrations",
+        "pages": [
+          "integrations/luckperms",
+          "integrations/placeholderapi",
+          "integrations/miniplaceholders"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Customizable chat formats with MiniMessage support",
+    "Per-group chat formatting for different permission levels",
+    "Private messaging with cross-server support",
+    "Player mentions with sound notifications",
+    "Multi-server message broadcasting via Redis",
+    "Chat cooldowns and spam prevention",
+    "Message similarity detection",
+    "Player ignore system with bypass permissions"
+  ],
+  "publicApiSurface": [
+    "/broadcast <message> - Broadcast messages across servers",
+    "/pm <username> <message> - Send private messages",
+    "/r <message> - Reply to private messages",
+    "/ignore <username> - Toggle ignoring players",
+    "/clearchat [player] - Clear chat for all or specific player",
+    "/fairychat reload - Reload configuration",
+    "fairychat.command.broadcast - Permission for broadcast command",
+    "fairychat.feature.minimessage - Permission to use MiniMessage formatting",
+    "fairychat.bypass.cooldown - Permission to bypass chat cooldown",
+    "fairychat.bypass.similarity - Permission to bypass similarity check",
+    "PluginConfiguration - Main configuration class",
+    "RedisCredentials - Redis connection configuration",
+    "PrivateMessagingConfig - Private messaging settings",
+    "BroadcastConfig - Broadcast settings",
+    "MentionConfig - Mention system configuration"
+  ]
+}
